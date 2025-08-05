@@ -1,11 +1,9 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import Header from "./components/welcome/Header";
 
 const App = () => {
   return (
     <div>
-      App
-      <div>hehe</div>
+      <Header />
     </div>
   );
 };
