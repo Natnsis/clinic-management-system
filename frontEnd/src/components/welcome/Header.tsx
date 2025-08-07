@@ -26,8 +26,12 @@ const Header = () => {
         </div>
       </div>
       <div className="flex gap-3">
-        <button className={button.primary}>Login</button>
-        <button className={button.outline}>Sign Up</button>
+        <Link to="/login">
+          <button className={button.primary}>Login</button>
+        </Link>
+        <Link to="/register">
+          <button className={button.outline}>Sign Up</button>
+        </Link>
       </div>
     </div>
   );
