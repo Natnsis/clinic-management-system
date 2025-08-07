@@ -1,4 +1,5 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
+
 export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -19,6 +20,7 @@ export default {
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
+        lightGreenBg: "var(--light-green-bg)",
       },
       borderRadius: {
         sm: "var(--radius-sm)",
