@@ -29,8 +29,6 @@ const Header = () => {
         <button className={button.primary}>Login</button>
         <button className={button.outline}>Sign Up</button>
       </div>
-      {/* second section  */}
-      <div></div>
     </div>
   );
 };
