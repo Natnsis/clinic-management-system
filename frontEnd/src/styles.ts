@@ -75,4 +75,3 @@ export const shadow = {
   md: "shadow",
   lg: "shadow-lg",
 };
-

@@ -1,7 +1,11 @@
-import React from "react";
+import AdminNavbar from "@/components/AdminNavbar";
 
 const Admin = () => {
-  return <div>Admin</div>;
+  return (
+    <div className="p-5">
+      <AdminNavbar />
+    </div>
+  );
 };
 
 export default Admin;

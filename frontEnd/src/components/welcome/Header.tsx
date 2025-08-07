@@ -8,7 +8,7 @@ const Header = () => {
       <div className="flex gap-40">
         <div className="flex gap-2 items-center font-poppins">
           <img src="/logo.png" alt="logo" className="w-15" />
-          <h1 className={text.heading}>HealNet</h1>
+          <h1 className={text.heading}></h1>
         </div>
         <div className="flex items-center gap-5">
           <Link to="/" className={text.link}>
