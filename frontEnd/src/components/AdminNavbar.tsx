@@ -21,14 +21,14 @@ const AdminNavbar = () => {
         <Link to="/admin" className={text.link}>
           Dashboard
         </Link>
-        <Link to="/admin" className={text.link}>
+        <Link to="/students" className={text.link}>
           Students
         </Link>
-        <Link to="/admin" className={text.link}>
+        <Link to="/staff" className={text.link}>
           Doctors
         </Link>
-        <Link to="/admin" className={text.link}>
-          Medications
+        <Link to="/treatments" className={text.link}>
+          Treatments
         </Link>
       </div>
       <div className="flex items-center gap-5">
