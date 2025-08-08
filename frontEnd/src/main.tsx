@@ -11,6 +11,8 @@ import SearchStaff from "./pages/staff/SearchStaff.tsx";
 import Search from "./pages/students/Search.tsx";
 import GetTreatment from "./pages/treatments/GetTreatment.tsx";
 import Notifications from "./users/Notifications.tsx";
+import Student from "./pages/dashboard/Student.tsx";
+import Staff from "./pages/dashboard/Staff.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -21,6 +23,8 @@ const router = createBrowserRouter([
   { path: "/staff", element: <SearchStaff /> },
   { path: "/treatments", element: <GetTreatment /> },
   { path: "/notifications", element: <Notifications /> },
+  { path: "/studentIn", element: <Student /> },
+  { path: "/staffIn", element: <Staff /> },
   { path: "*", element: <NotFound /> },
 ]);
 
