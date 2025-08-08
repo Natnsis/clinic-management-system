@@ -1,13 +1,14 @@
 import AdminNavbar from "@/components/AdminNavbar";
-import StudentsTable from "@/components/StudentsTable";
 
-const Search = () => {
+const Notifications = () => {
   return (
     <div className="p-5">
       <AdminNavbar />
-      <StudentsTable />
+      <div>
+        
+      </div>
     </div>
   );
 };
 
-export default Search;
+export default Notifications;

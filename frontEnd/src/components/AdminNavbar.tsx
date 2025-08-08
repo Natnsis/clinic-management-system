@@ -25,14 +25,16 @@ const AdminNavbar = () => {
           Students
         </Link>
         <Link to="/staff" className={text.link}>
-          Doctors
+          Staff
         </Link>
         <Link to="/treatments" className={text.link}>
           Treatments
         </Link>
       </div>
       <div className="flex items-center gap-5">
-        <Bell className=" text-primary" />
+        <Link to="/notifications">
+          <Bell className=" text-primary" />
+        </Link>
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger>
