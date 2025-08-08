@@ -12,7 +12,7 @@ import {
 
 const AdminNavbar = () => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between border-b-1 mb-10">
       <div className="flex gap-2 items-center">
         <img src="/logo.png" alt="logo" className="w-10" />
         <h1 className={text.heading}>HealNet</h1>
