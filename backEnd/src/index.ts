@@ -16,3 +16,48 @@ app.use(errorHandler);
 app.listen(config.port, () => console.log("hello to the back end!"));
 
 export default app;
+
+// /auth/login
+// /auth/logout
+// /auth/register
+// /auth/refresh-token
+
+// /patients
+// /patients/{id}
+// /patients/{id}/appointments
+// /patients/{id}/medical-records
+
+// /doctors
+// /doctors/{id}
+// /doctors/{id}/appointments
+// /doctors/{id}/schedules
+
+// /appointments
+// /appointments/{id}
+// /appointments/{id}/cancel
+// /appointments/upcoming
+// /appointments/past
+
+// /medical-records
+// /medical-records/{id}
+// /medical-records/patient/{patientId}
+
+// /prescriptions
+// /prescriptions/{id}
+// /prescriptions/patient/{patientId}
+
+// /billing
+// /billing/invoices
+// /billing/invoices/{id}
+// /billing/payments
+// /billing/payments/{id}
+
+// /departments
+// /departments/{id}
+
+// /notifications
+// /notifications/{id}
+
+// /reports/daily
+// /reports/monthly
+// /reports/annual

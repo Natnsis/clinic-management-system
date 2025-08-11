@@ -1,15 +1,7 @@
-import Footer from "./components/welcome/Footer";
-import Header from "./components/welcome/Header";
-import Hero from "./components/welcome/Hero";
+import React from "react";
 
 const App = () => {
-  return (
-    <div>
-      <Header />
-      <Hero />
-      <Footer />
-    </div>
-  );
+  return <div>App</div>;
 };
 
 export default App;
