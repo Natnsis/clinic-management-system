@@ -9,7 +9,6 @@ import Dashboard from "./pages/admin/Dashboard.tsx";
 import Feedback from "./pages/admin/Feedback.tsx";
 import ManagePatients from "./pages/admin/ManagePatients.tsx";
 import ManageStaff from "./pages/admin/ManageStaff.tsx";
-import ManageUsers from "./pages/admin/ManageUsers.tsx";
 import Notifications from "./pages/admin/Notifications.tsx";
 import Reports from "./pages/admin/Reports.tsx";
 import Settings from "./pages/admin/Settings.tsx";
@@ -38,7 +37,6 @@ const router = createBrowserRouter([
   { path: "/feedback", element: <Feedback /> },
   { path: "/managePatients", element: <ManagePatients /> },
   { path: "/manageStaff", element: <ManageStaff /> },
-  { path: "/manageUsers", element: <ManageUsers /> },
   { path: "/notifications", element: <Notifications /> },
   { path: "/reports", element: <Reports /> },
   { path: "/setting", element: <Settings /> },

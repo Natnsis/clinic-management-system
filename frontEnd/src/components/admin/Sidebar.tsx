@@ -42,12 +42,6 @@ const Sidebar = () => {
       link: "/feedbacks",
     },
     {
-      icon: FileText,
-      label: "Audit Logs",
-      key: "audit",
-      link: "/audit",
-    },
-    {
       icon: Users,
       label: "Manage Patients",
       key: "patients",
