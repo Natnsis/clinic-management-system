@@ -372,7 +372,7 @@ const Feedback = () => {
                       handleResponseChange(feedback.id, e.target.value)
                     }
                     rows={3}
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                   setting className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="Enter your response to this feedback..."
                   />
                   <div className="flex justify-end space-x-2 mt-3">

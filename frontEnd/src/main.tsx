@@ -11,9 +11,7 @@ import ManagePatients from "./pages/admin/ManagePatients.tsx";
 import ManageStaff from "./pages/admin/ManageStaff.tsx";
 import Notifications from "./pages/admin/Notifications.tsx";
 import Reports from "./pages/admin/Reports.tsx";
-import Settings from "./pages/admin/Settings.tsx";
 import PatientFeedback from "./pages/patient/PatientFeedback.tsx";
-import LabResults from "./pages/patient/LabResults.tsx";
 import MedicalHistory from "./pages/patient/MedicalHistory.tsx";
 import Messages from "./pages/patient/Messages.tsx";
 import MyAppointments from "./pages/patient/MyAppointments.tsx";
@@ -39,9 +37,7 @@ const router = createBrowserRouter([
   { path: "/manageStaff", element: <ManageStaff /> },
   { path: "/notifications", element: <Notifications /> },
   { path: "/reports", element: <Reports /> },
-  { path: "/setting", element: <Settings /> },
   { path: "/patientFeedback", element: <PatientFeedback /> },
-  { path: "/labResults", element: <LabResults /> },
   { path: "/medicalHistory", element: <MedicalHistory /> },
   { path: "/messages", element: <Messages /> },
   { path: "/myAppointments", element: <MyAppointments /> },
