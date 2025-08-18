@@ -26,6 +26,8 @@ import PatientRecords from "./pages/staff/PatientRecords.tsx";
 import StaffDashboard from "./pages/staff/StaffDashboard.tsx";
 import StaffProfile from "./pages/staff/StaffProfile.tsx";
 import NotFound from "./NotFound.tsx";
+import StaffNotifications from "./pages/staff/StaffNotifications.tsx";
+import StaffPerscriptions from "./pages/staff/StaffPerscriptions.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -50,6 +52,11 @@ const router = createBrowserRouter([
   { path: "/patientList", element: <PatientList /> },
   { path: "/patientRecords", element: <PatientRecords /> },
   { path: "/staffDashboard", element: <StaffDashboard /> },
+  { path: "/staffNotification", element: <StaffNotifications /> },
+  { path: "/patientLists", element: <PatientList /> },
+  { path: "/patientRecords", element: <PatientRecords /> },
+  { path: "/staffMessages", element: <StaffMessages /> },
+  { path: "/staffPrescriptions", element: <StaffPerscriptions /> },
   { path: "/staffProfile", element: <StaffProfile /> },
   { path: "*", element: <NotFound /> },
 ]);
