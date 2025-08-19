@@ -6,22 +6,13 @@ import {
   Bell,
   MessageCircle,
   User,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const StaffSidebar = () => {
-  const [openMenus, setOpenMenus] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
 
-  const toggleMenu = (menu) => {
-    setOpenMenus((prev) => ({
-      ...prev,
-      [menu]: !prev[menu],
-    }));
-  };
-
-  const handleItemClick = (item) => {
+  const handleItemClick = (item: string) => {
     setActiveItem(item);
   };
 
@@ -30,43 +21,43 @@ const StaffSidebar = () => {
       icon: Calendar,
       label: "Appointment Schedules",
       key: "appointments",
-      link: "/staff/appointments",
+      link: "/appointmentSchedule",
     },
     {
       icon: Bell,
       label: "Notifications",
       key: "notifications",
-      link: "/staff/notifications",
+      link: "/staffNotification",
     },
     {
       icon: Users,
       label: "Patient Lists",
       key: "patients",
-      link: "/staff/patients",
+      link: "/patientList",
     },
     {
       icon: FileText,
       label: "Patient Records",
       key: "records",
-      link: "/staff/records",
+      link: "/patientRecords",
     },
     {
       icon: FileText,
       label: "Prescriptions",
       key: "prescriptions",
-      link: "/staff/prescriptions",
+      link: "/staffPrescriptions",
     },
     {
       icon: MessageCircle,
       label: "Messages",
       key: "messages",
-      link: "/staff/messages",
+      link: "/staffMessages",
     },
     {
       icon: User,
       label: "Profile",
       key: "profile",
-      link: "/staff/profile",
+      link: "/staffProfile",
     },
   ];
 
@@ -93,56 +84,26 @@ const StaffSidebar = () => {
           {menuItems.map((item) => (
             <div key={item.key}>
               <button
-                onClick={() =>
-                  item.submenu
-                    ? toggleMenu(item.key)
-                    : handleItemClick(item.key)
-                }
+                onClick={() => handleItemClick(item.key)}
                 className={`w-full flex items-center justify-between p-3 rounded-xl text-left transition-all duration-200 ${
                   activeItem === item.key
                     ? "bg-amber-100 text-amber-700 font-medium shadow-sm"
                     : "text-amber-800 hover:bg-amber-50"
                 }`}
               >
-                <div className="flex items-center space-x-3">
-                  <item.icon
-                    className={`h-5 w-5 ${
-                      activeItem === item.key
-                        ? "text-amber-600"
-                        : "text-amber-600"
-                    }`}
-                  />
-                  <span>{item.label}</span>
-                </div>
-                {item.submenu && (
-                  <div
-                    className={`transition-transform duration-200 ${
-                      openMenus[item.key] ? "rotate-180" : ""
-                    }`}
-                  >
-                    {openMenus[item.key] ? (
-                      <ChevronUp className="h-4 w-4 text-amber-500" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 text-amber-500" />
-                    )}
+                <Link to={item.link}>
+                  <div className="flex items-center space-x-3">
+                    <item.icon
+                      className={`h-5 w-5 ${
+                        activeItem === item.key
+                          ? "text-amber-600"
+                          : "text-amber-600"
+                      }`}
+                    />
+                    <span>{item.label}</span>
                   </div>
-                )}
+                </Link>
               </button>
-
-              {/* Submenu */}
-              {item.submenu && openMenus[item.key] && (
-                <div className="mt-1 ml-4 space-y-1">
-                  {item.submenu.map((subItem, index) => (
-                    <a
-                      key={index}
-                      href={subItem.link}
-                      className="block px-3 py-2 text-sm text-amber-700 hover:bg-amber-100 hover:text-amber-800 rounded-lg transition-colors"
-                    >
-                      {subItem.label}
-                    </a>
-                  ))}
-                </div>
-              )}
             </div>
           ))}
         </div>
