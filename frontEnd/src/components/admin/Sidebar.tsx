@@ -1,14 +1,11 @@
 import {
   LayoutDashboard,
-  Calendar,
+  ClipboardMinus,
   Users,
   MessageCircle,
-  FileText,
   Bell,
   Settings,
   User,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -39,27 +36,19 @@ const Sidebar = () => {
       icon: MessageCircle,
       label: "Patient Feedbacks",
       key: "feedbacks",
-      link: "/feedbacks",
+      link: "/feedback",
     },
     {
       icon: Users,
       label: "Manage Patients",
-      key: "patients",
-      submenu: [
-        { label: "All Patients", link: "/patients/all" },
-        { label: "New Patient", link: "/patients/new" },
-        { label: "Patient Records", link: "/patients/records" },
-      ],
+      key: "managePatients",
+      link: "/managePatients",
     },
     {
       icon: Users,
       label: "Manage Staff",
-      key: "staff",
-      submenu: [
-        { label: "All Staff", link: "/staff/all" },
-        { label: "Add Staff", link: "/staff/new" },
-        { label: "Staff Roles", link: "/staff/roles" },
-      ],
+      key: "manageStaff",
+      link: "/manageStaff",
     },
     {
       icon: Bell,
@@ -68,10 +57,10 @@ const Sidebar = () => {
       link: "/notifications",
     },
     {
-      icon: Settings,
-      label: "Settings",
-      key: "settings",
-      link: "/settings",
+      icon: ClipboardMinus,
+      label: "Report",
+      key: "report",
+      link: "/reports",
     },
   ];
 
@@ -97,57 +86,31 @@ const Sidebar = () => {
         <div className="space-y-2">
           {menuItems.map((item) => (
             <div key={item.key}>
-              <button
-                onClick={() =>
-                  item.submenu
-                    ? toggleMenu(item.key)
-                    : handleItemClick(item.key)
-                }
-                className={`w-full flex items-center justify-between p-3 rounded-xl text-left transition-all duration-200 ${
-                  activeItem === item.key
-                    ? "bg-emerald-100 text-emerald-700 font-medium shadow-sm"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-emerald-600"
-                }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <item.icon
-                    className={`h-5 w-5 ${
-                      activeItem === item.key
-                        ? "text-emerald-600"
-                        : "text-gray-600"
-                    }`}
-                  />
-                  <span>{item.label}</span>
-                </div>
-                {item.submenu && (
-                  <div
-                    className={`transition-transform duration-200 ${
-                      openMenus[item.key] ? "rotate-180" : ""
-                    }`}
-                  >
-                    {openMenus[item.key] ? (
-                      <ChevronUp className="h-4 w-4 text-gray-500" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4 text-gray-500" />
-                    )}
+              <Link to={item.link ?? "/"}>
+                <button
+                  onClick={() =>
+                    item.submenu
+                      ? toggleMenu(item.key)
+                      : handleItemClick(item.key)
+                  }
+                  className={`w-full flex items-center justify-between p-3 rounded-xl text-left transition-all duration-200 ${
+                    activeItem === item.key
+                      ? "bg-emerald-100 text-emerald-700 font-medium shadow-sm"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-emerald-600"
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <item.icon
+                      className={`h-5 w-5 ${
+                        activeItem === item.key
+                          ? "text-emerald-600"
+                          : "text-gray-600"
+                      }`}
+                    />
+                    <span>{item.label}</span>
                   </div>
-                )}
-              </button>
-
-              {/* Submenu */}
-              {item.submenu && openMenus[item.key] && (
-                <div className="mt-1 ml-4 space-y-1">
-                  {item.submenu.map((subItem, index) => (
-                    <Link
-                      key={index}
-                      to={subItem.link}
-                      className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-emerald-600 rounded-lg transition-colors"
-                    >
-                      {subItem.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
+                </button>
+              </Link>
             </div>
           ))}
         </div>

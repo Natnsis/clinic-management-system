@@ -14,20 +14,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   const navItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/patient/dashboard" },
-    { icon: FileText, label: "Medical History", href: "/patient/history" },
-    { icon: FileText, label: "Prescriptions", href: "/patient/prescriptions" },
-    { icon: Calendar, label: "Appointments", href: "/patient/appointments" },
-    { icon: MessageCircle, label: "Feedback", href: "/patient/feedback" },
-    { icon: User, label: "Profile", href: "/patient/profile" },
+    { icon: LayoutDashboard, label: "Dashboard", href: "/patientDashboard" },
+    { icon: FileText, label: "Medical History", href: "/medicalHistory" },
+    { icon: FileText, label: "Prescriptions", href: "/prescriptions" },
+    { icon: Calendar, label: "Appointments", href: "/myAppointments" },
+    {
+      icon: MessageCircle,
+      label: "Feedback",
+      href: "/patientFeedback",
+    },
+    { icon: User, label: "Profile", href: "/profile" },
   ];
 
   return (
@@ -61,29 +65,32 @@ const Header = () => {
           {/* Right Section */}
           <div className="flex items-center space-x-2">
             {/* Message Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-600 hover:text-blue-600 hover:bg-blue-50 relative transition-all duration-200"
-            >
-              <MessageCircle className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center animate-pulse">
-                3
-              </span>
-            </Button>
+            <Link to="/messages">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:text-blue-600 hover:bg-blue-50 relative transition-all duration-200"
+              >
+                <MessageCircle className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center animate-pulse">
+                  3
+                </span>
+              </Button>
+            </Link>
 
             {/* Notification Icon */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-600 hover:text-blue-600 hover:bg-blue-50 relative transition-all duration-200"
-              onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-            >
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-5 w-5 bg-blue-500 rounded-full text-xs text-white flex items-center justify-center">
-                2
-              </span>
-            </Button>
+            <Link to="/patientNotification">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:text-blue-600 hover:bg-blue-50 relative transition-all duration-200"
+              >
+                <Bell className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 h-5 w-5 bg-blue-500 rounded-full text-xs text-white flex items-center justify-center">
+                  2
+                </span>
+              </Button>
+            </Link>
 
             {/* Theme Toggle */}
             <Button
@@ -191,9 +198,9 @@ const Header = () => {
         <nav className="hidden md:block border-t border-gray-100">
           <div className="flex justify-between items-center py-2">
             {navItems.map((item, index) => (
-              <a
+              <Link
                 key={item.label}
-                href={item.href}
+                to={item.href ?? "/"}
                 className={`flex flex-col items-center px-4 py-2 rounded-lg transition-all duration-200 ${
                   index === 0
                     ? "text-blue-600 bg-blue-50 font-medium shadow-sm"
@@ -202,7 +209,7 @@ const Header = () => {
               >
                 <item.icon className="h-5 w-5 mb-1" />
                 <span className="text-xs font-medium">{item.label}</span>
-              </a>
+              </Link>
             ))}
           </div>
         </nav>
@@ -224,57 +231,6 @@ const Header = () => {
               ))}
             </div>
           </nav>
-        )}
-
-        {/* Notification Dropdown */}
-        {isNotificationOpen && (
-          <div className="absolute right-4 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 animate-fade-in">
-            <div className="px-5 py-3 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900">Notifications</h3>
-            </div>
-            <div className="max-h-60 overflow-y-auto">
-              <a
-                href="#"
-                className="flex items-start p-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
-              >
-                <div className="h-9 w-9 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                  <Bell className="h-5 w-5 text-blue-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">
-                    Appointment Reminder
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Your appointment with Dr. Johnson is tomorrow at 10:30 AM
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">2 hours ago</p>
-                </div>
-              </a>
-              <a
-                href="#"
-                className="flex items-start p-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
-              >
-                <div className="h-9 w-9 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">
-                    Prescription Ready
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Your prescription for Loratadine is ready for pickup at
-                    Campus Pharmacy
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">5 hours ago</p>
-                </div>
-              </a>
-            </div>
-            <div className="px-5 py-3 border-t border-gray-100">
-              <button className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium">
-                View all notifications
-              </button>
-            </div>
-          </div>
         )}
       </div>
     </header>

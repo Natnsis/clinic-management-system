@@ -35,7 +35,10 @@ const App = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+    <div
+      className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50"
+      id="home"
+    >
       {/* Navigation */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-emerald-100">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,9 +47,11 @@ const App = () => {
               <div className="h-8 w-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
                 <div className="h-4 w-4 bg-white rounded-full"></div>
               </div>
-              <span className="font-bold text-xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                ClinicFlow
-              </span>
+              <a href="#home">
+                <span className="font-bold text-xl bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  ClinicFlow
+                </span>
+              </a>
             </div>
 
             <nav className="hidden md:flex space-x-8">
@@ -72,17 +77,10 @@ const App = () => {
 
             <div className="flex items-center space-x-4">
               <Link to="/login">
-                <Button
-                  variant="ghost"
-                  className="text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50"
-                >
+                <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white">
                   Login
                 </Button>
               </Link>
-
-              <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white">
-                Get Started
-              </Button>
             </div>
           </div>
         </div>
@@ -117,14 +115,16 @@ const App = () => {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-lg px-8 py-6 h-auto min-w-48">
-                  Get Started
+                  Explore
                 </Button>
-                <Button
-                  variant="outline"
-                  className="border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6 h-auto min-w-48"
-                >
-                  Login
-                </Button>
+                <Link to="/login">
+                  <Button
+                    variant="outline"
+                    className="border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6 h-auto min-w-48"
+                  >
+                    Login
+                  </Button>
+                </Link>
               </div>
             </div>
 
@@ -597,7 +597,7 @@ const App = () => {
             </Button>
             <Button
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white/10 text-lg px-8 py-6 h-auto"
+              className="border-2 border-white text-emerald-600 hover:bg-white/10 text-lg px-8 py-6 h-auto"
             >
               Schedule Demo
             </Button>
