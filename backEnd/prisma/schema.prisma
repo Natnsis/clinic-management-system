@@ -13,3 +13,242 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+//enums
+enum Department {
+  generalMedication
+  emergency
+  administration
+  lab
+  cardiology
+}
+
+enum Role {
+  physician
+  nurse
+  receptionist
+  doctor
+  technician
+}
+
+enum Status {
+  active
+  inactive
+}
+
+enum Availability {
+  full_time
+  part_time
+}
+
+enum AppointmentStatus {
+  confirmed
+  pending
+  canceled 
+}
+
+enum FeedbackStatus {
+  reviewed
+  pending
+}
+
+enum ReportStatus {
+  approved
+  pending
+  denied 
+}
+
+enum Priority {
+  normal
+  high
+  urgent
+}
+
+enum Refills {
+  no_refills 
+  one_refill
+  two_refills
+  three_refills
+  four_refills
+}
+
+//models
+
+model Admin {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Staff {
+  id           String       @id @default(uuid())
+  fName        String
+  mName        String
+  lName        String
+  email        String       @unique
+  password     String
+  department   Department
+  role         Role
+  status       Status
+  availability Availability
+  phoneNumber  Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  // Relationships
+  staffProfile  StaffProfile?
+  appointments  Appointments[] 
+  prescriptions Prescriptions[] 
+  reports       Reports[] 
+  messages      Message[]
+}
+
+model Patients {
+  id              String         @id @default(uuid())
+  fName           String
+  mName           String
+  lname           String
+  email           String         @unique
+  lastVisit       DateTime? 
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relationships
+  patientProfile  PatientProfile?
+  appointments    Appointments[] // A patient can have multiple appointments
+  records         Records[] // A patient can have multiple medical records
+  prescriptions   Prescriptions[] // A patient can have multiple prescriptions
+  feedbacks       Feedbacks[] // A patient can submit multiple feedbacks
+  messages        Message[] // A patient can send/receive multiple messages
+}
+
+model Appointments {
+  id        String          @id @default(uuid())
+  patientId String
+  staffId   String
+  reason    String
+  status    AppointmentStatus
+  note      String? //notes might be added later
+  location  String
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  // Relationships
+  patient   Patients @relation(fields: [patientId], references: [id])
+  staff     Staff    @relation(fields: [staffId], references: [id])
+}
+
+model Records {
+  id        String   @id @default(uuid())
+  illness   String
+  patientId String
+  treatment String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  patient   Patients @relation(fields: [patientId], references: [id])
+}
+
+model Prescriptions {
+  id         String   @id @default(uuid())
+  patientId  String
+  staffId    String
+  medication String
+  detail     String
+  duration   DateTime
+  refills    Refills
+  frequency  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relationships
+  patient    Patients @relation(fields: [patientId], references: [id])
+  staff      Staff    @relation(fields: [staffId], references: [id])
+}
+
+model Feedbacks {
+  id        String        @id @default(uuid())
+  patientId String
+  status    FeedbackStatus
+  content   String
+  rate      Int
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relationships
+  patient   Patients @relation(fields: [patientId], references: [id])
+  response  Response? // A feedback can have one response
+}
+
+model Response {
+  id         String   @id @default(uuid())
+  feedbackId String   @unique // One-to-one relationship with Feedback
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relationships
+  feedback   Feedbacks @relation(fields: [feedbackId], references: [id])
+}
+
+model Reports {
+  id        String      @id @default(uuid())
+  title     String
+  staffId   String
+  status    ReportStatus
+  priority  Priority
+  content   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // Relationships
+  staff     Staff @relation(fields: [staffId], references: [id])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  patientId String
+  staffId   String
+  time      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  patient   Patients @relation(fields: [patientId], references: [id])
+  staff     Staff    @relation(fields: [staffId], references: [id])
+}
+
+model StaffProfile {
+  staffId        String   @id @unique // One-to-one relationship with Staff
+  officeHours    String 
+  Education      String
+  Experience     Int
+  Role           String
+  specialization String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relationships
+  staff          Staff @relation(fields: [staffId], references: [id])
+}
+
+model PatientProfile {
+  patientId         String   @id @unique // One-to-one relationship with Patients
+  emergencyContact  String
+  InsuranceProvider String @default("AssosaUniversity")
+  policyNumber      String @default("haha_123456")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relationships
+  patient           Patients @relation(fields: [patientId], references: [id])
+}
+
+
+
+
