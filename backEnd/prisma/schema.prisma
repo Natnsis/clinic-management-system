@@ -76,11 +76,10 @@ enum Refills {
 
 model Admin {
   id        String   @id @default(uuid())
-  username  String   @unique
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime? @updatedAt
 }
 
 model Staff {
@@ -110,11 +109,12 @@ model Patients {
   id              String         @id @default(uuid())
   fName           String
   mName           String
-  lname           String
+  lName           String
+  password        String
   email           String         @unique
   lastVisit       DateTime? 
   createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  updatedAt       DateTime?       @updatedAt
 
   // Relationships
   patientProfile  PatientProfile?
