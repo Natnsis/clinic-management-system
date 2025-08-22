@@ -6,13 +6,21 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // Utility to generate tokens
-const generateTokens = (userId: string) => {
-  const accessToken = jwt.sign({ userId }, process.env.ACCESS_SECRET!, {
-    expiresIn: "15m",
-  });
-  const refreshToken = jwt.sign({ userId }, process.env.REFRESH_SECRET!, {
-    expiresIn: "7d",
-  });
+const generateTokens = (userId: string, role: string, email?: string) => {
+  const accessToken = jwt.sign(
+    { userId, role, email },
+    process.env.ACCESS_SECRET!,
+    {
+      expiresIn: "15m",
+    }
+  );
+  const refreshToken = jwt.sign(
+    { userId, role, email },
+    process.env.REFRESH_SECRET!,
+    {
+      expiresIn: "7d",
+    }
+  );
   return { accessToken, refreshToken };
 };
 
@@ -30,27 +38,28 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-//login
+// LOGIN
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  // 🔹 Hardcoded admin check
-  if (
-    email === process.env.ADMIN_EMAIL &&
-    password === process.env.ADMIN_PASSWORD
-  ) {
-    const accessToken = jwt.sign(
-      { role: "admin", email },
-      process.env.ACCESS_SECRET!,
-      { expiresIn: "15m" }
-    );
-    const refreshToken = jwt.sign(
-      { role: "admin", email },
-      process.env.REFRESH_SECRET!,
-      { expiresIn: "7d" }
-    );
+  // Admin check from DB
+  const admin = await prisma.admin.findUnique({ where: { email } });
+  if (admin) {
+    // For hardcoded test admin without hash
+    if (admin.password === password) {
+      const { accessToken, refreshToken } = generateTokens(admin.id, "admin");
 
-    return res.json({ accessToken, refreshToken });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      return res.json({ accessToken });
+    } else {
+      return res.status(401).json({ error: "invalid credentials" });
+    }
   }
 
   // 🔹 Staff check
@@ -59,18 +68,16 @@ export const login = async (req: Request, res: Response) => {
     const auth = await bcrypt.compare(password, staff.password);
     if (!auth) return res.status(401).json({ error: "invalid credentials" });
 
-    const accessToken = jwt.sign(
-      { userId: staff.id, role: "staff" },
-      process.env.ACCESS_SECRET!,
-      { expiresIn: "15m" }
-    );
-    const refreshToken = jwt.sign(
-      { userId: staff.id, role: "staff" },
-      process.env.REFRESH_SECRET!,
-      { expiresIn: "7d" }
-    );
+    const { accessToken, refreshToken } = generateTokens(staff.id, "staff");
 
-    return res.json({ accessToken, refreshToken });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({ accessToken });
   }
 
   // 🔹 Patient check
@@ -79,34 +86,33 @@ export const login = async (req: Request, res: Response) => {
     const auth = await bcrypt.compare(password, patient.password);
     if (!auth) return res.status(401).json({ error: "invalid credentials" });
 
-    const accessToken = jwt.sign(
-      { userId: patient.id, role: "patient" },
-      process.env.ACCESS_SECRET!,
-      { expiresIn: "15m" }
-    );
-    const refreshToken = jwt.sign(
-      { userId: patient.id, role: "patient" },
-      process.env.REFRESH_SECRET!,
-      { expiresIn: "7d" }
-    );
+    const { accessToken, refreshToken } = generateTokens(patient.id, "patient");
 
-    return res.json({ accessToken, refreshToken });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({ accessToken });
   }
 
-  // If no user found
   return res.status(404).json({ error: "email not registered" });
 };
 
 // REFRESH
 export const refresh = (req: Request, res: Response) => {
-  const { token } = req.body;
+  const token = req.cookies.refreshToken;
   if (!token) return res.sendStatus(401);
 
   try {
     const payload = jwt.verify(token, process.env.REFRESH_SECRET!) as {
       userId: string;
+      role: string;
     };
-    const { accessToken } = generateTokens(payload.userId);
+    const { accessToken } = generateTokens(payload.userId, payload.role);
+
     res.json({ accessToken });
   } catch {
     res.sendStatus(403);
