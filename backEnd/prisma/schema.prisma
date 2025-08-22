@@ -240,6 +240,8 @@ model StaffProfile {
 model PatientProfile {
   patientId         String   @id @unique // One-to-one relationship with Patients
   emergencyContact  String
+  year              String
+  major        String
   InsuranceProvider String @default("AssosaUniversity")
   policyNumber      String @default("haha_123456")
   createdAt         DateTime @default(now())
