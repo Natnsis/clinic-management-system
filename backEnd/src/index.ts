@@ -1,17 +1,19 @@
 require("dotenv").config();
-import express from "express";
+import express, { Request, Response } from "express";
 import authRouter from "./routes/authRoutes";
 
 const app = express();
-app.use(express.json);
+const PORT = process.env.PORT || 4000;
 
 app.use(express.json());
+
+// routes
 app.use("/auth", authRouter);
 
-app.listen(process.env.PORT || 4000, () => {
-  console.log(`Server is running on http://localhost:${process.env.PORT}`);
+app.get("/", (req: Request, res: Response) => {
+  res.send("Welcome to the back end");
 });
 
-// // Routes
-
-// Global error handler (should be after routes)
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});

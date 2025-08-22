@@ -6,6 +6,7 @@ import {
   Bell,
   MessageCircle,
   User,
+  LayoutDashboard,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -17,6 +18,12 @@ const StaffSidebar = () => {
   };
 
   const menuItems = [
+    {
+      icon: LayoutDashboard,
+      label: "Dashboard",
+      key: "appointments",
+      link: "/staffDashboard",
+    },
     {
       icon: Calendar,
       label: "Appointment Schedules",
