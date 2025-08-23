@@ -10,8 +10,8 @@ const router = express.Router();
 
 router.get("/", getAllPatients);
 router.get("/:id", getPatientsById);
-router.delete("/", deletePatient);
-router.put("/", updatePatient);
+router.delete("/:userId", deletePatient);
+router.put("/:userId", updatePatient);
 
 export default router;
 // /patients/{id}/appointments

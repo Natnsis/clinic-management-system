@@ -14,19 +14,26 @@ export async function getAllPatients(req: Request, res: Response) {
 }
 
 export async function getPatientsById(req: Request, res: Response) {
-  const { userId } = req.body;
-  const patient = await prisma.patients.findUnique({
-    where: { id: userId },
-  });
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ error: "Patient ID is required" });
+    }
+    const patient = await prisma.patients.findUnique({
+      where: { id },
+    });
 
-  if (!patient)
-    return res.status(404).json({ message: "User with that ID not found" });
-  return res.status(200).json(patient);
+    if (!patient)
+      return res.status(404).json({ message: "User with that ID not found" });
+    return res.status(200).json(patient);
+  } catch (e) {
+    res.status(500).json({ message: "internal error, try later again!" });
+  }
 }
 
 export async function deletePatient(req: Request, res: Response) {
-  const { userId } = req.body;
   try {
+    const { userId } = req.params;
     await prisma.patients.delete({ where: { id: userId } });
     return res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
@@ -35,8 +42,9 @@ export async function deletePatient(req: Request, res: Response) {
 }
 
 export async function updatePatient(req: Request, res: Response) {
-  const { userId, userInfo } = req.body;
   try {
+    const { userInfo } = req.body;
+    const { userId } = req.params;
     const updatedPatient = await prisma.patients.update({
       where: { id: userId },
       data: {

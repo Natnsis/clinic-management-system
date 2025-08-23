@@ -4,6 +4,7 @@ import authRouter from "./routes/authRoutes";
 import patientsRoute from "./routes/patientRoutes";
 import appointmentRoute from "./routes/appointmentRoutes";
 import staffRoute from "./routes/staffRoutes";
+import prescriptionsRoute from "./routes/prescriptionRoutes";
 
 //constants
 const app = express();
@@ -16,6 +17,7 @@ app.use("/auth", authRouter);
 app.use("/patients", patientsRoute);
 app.use("/appointment", appointmentRoute);
 app.use("/staff", staffRoute);
+app.use("/prescriptions", prescriptionsRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to the back end");
