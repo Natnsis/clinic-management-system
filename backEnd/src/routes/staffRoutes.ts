@@ -1,11 +1,18 @@
 import express from "express";
-import { addStaff } from "../controllers/staffController";
+import {
+  addStaff,
+  deleteStaff,
+  getAllStaff,
+  getStaffById,
+  updateStaff,
+} from "../controllers/staffController";
 const router = express.Router();
 
 router.post("/", addStaff);
-router.get("/", (req, res) => {
-  res.json({ message: "hello world" });
-});
+router.get("/", getAllStaff);
+router.get("/:userId", getStaffById);
+router.put("/:userId", updateStaff);
+router.delete("/:userId", deleteStaff);
 
 export default router;
 

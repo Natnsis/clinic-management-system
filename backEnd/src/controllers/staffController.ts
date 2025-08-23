@@ -30,42 +30,68 @@ export async function addStaff(req: Request, res: Response) {
   }
 }
 
-// id           String       @id @default(uuid())
-//   fName        String
-//   mName        String
-//   lName        String
-//   email        String       @unique
-//   password     String
-//   department   Department
-//   role         Role
-//   status       Status
-//   availability Availability
-//   phoneNumber  Int
-//   createdAt    DateTime     @default(now())
-//   updatedAt    DateTime     @updatedAt
+export async function getAllStaff(req: Request, res: Response) {
+  try {
+    const staffMembers = await prisma.staff.findMany({
+      orderBy: { createdAt: "desc" },
+    });
 
-// enum Department {
-//   generalMedication
-//   emergency
-//   administration
-//   lab
-//   cardiology
-// }
+    return res.status(200).json(staffMembers);
+  } catch (e) {
+    return res.status(500).json({ message: "unable to get staff members!" });
+  }
+}
 
-// enum Status {
-//   active
-//   inactive
-// }
+export async function deleteStaff(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    await prisma.staff.delete({ where: { id: userId } });
+    res.status(200).json({ message: "staff member deleted successfully" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "unable to delete staff member!" });
+  }
+}
 
-// enum Availability {
-//   full_time
-//   part_time
-// }
+export async function getStaffById(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    const staffMember = await prisma.staff.findUnique({
+      where: { id: userId },
+    });
 
-// enum Role {
-//   physician
-//   nurse
-//   receptionist
-//   doctor
-//   technician
-// }
+    if (!staffMember) {
+      return res.status(404).json({ error: "Staff member not found" });
+    }
+    res.status(200).json(staffMember);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Unable to find staff member" });
+  }
+}
+
+export async function updateStaff(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    const { userInfo } = req.body;
+    await prisma.staff.update({
+      where: { id: userId },
+      data: {
+        fName: userInfo.fName,
+        mName: userInfo.mName,
+        lName: userInfo.lName,
+        department: userInfo.department,
+        role: userInfo.role,
+        status: userInfo.status,
+        availability: userInfo.availability,
+        phoneNumber: parseInt(userInfo.phoneNumber),
+        updatedAt: new Date(),
+      },
+    });
+    return res
+      .status(200)
+      .json({ message: "user has been updated successfully!" });
+  } catch (e) {
+    res.status(500).json({ message: "unable to update the staff member!" });
+  }
+}
