@@ -15,8 +15,3 @@ router.put("/:userId", updateStaff);
 router.delete("/:userId", deleteStaff);
 
 export default router;
-
-// /doctors
-// /doctors/{id}
-// /doctors/{id}/appointments
-// /doctors/{id}/schedules
