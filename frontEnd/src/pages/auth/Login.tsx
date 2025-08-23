@@ -12,28 +12,36 @@ import {
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { loginFormSchema } from "@/schemas/userFormSchema";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
+type UserFormValues = z.infer<typeof loginFormSchema>;
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UserFormValues>({
+    resolver: zodResolver(loginFormSchema),
+  });
+
+  const onSubmit = (data: UserFormValues) => {
     setIsLoading(true);
-    // Simulate login process
+    console.log("Validation Passed! Form Data:", data);
     setTimeout(() => {
+      console.log("Validation check complete.");
       setIsLoading(false);
-    }, 2000);
+    }, 1000);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-200 rounded-full opacity-20"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-teal-200 rounded-full opacity-20"></div>
-      </div>
-
+      {/* ... (rest of your component) */}
       <Card className="w-full max-w-md border-none shadow-2xl bg-white/80 backdrop-blur-sm">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-2">
@@ -49,7 +57,7 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label
@@ -64,9 +72,14 @@ const Login = () => {
                   id="email"
                   type="email"
                   placeholder="you@example.com"
+                  {...register("email")}
                   className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                  required
                 />
+              </div>
+              <div className="my-2">
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
               </div>
             </div>
 
@@ -83,8 +96,8 @@ const Login = () => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  {...register("password")}
                   className="pl-10 pr-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                  required
                 />
                 <button
                   type="button"
@@ -99,30 +112,14 @@ const Login = () => {
                 </button>
               </div>
             </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                />
-                <label
-                  htmlFor="remember"
-                  className="ml-2 block text-sm text-gray-700"
-                >
-                  Remember me
-                </label>
-              </div>
-              <a
-                href="#"
-                className="text-sm font-medium text-emerald-600 hover:text-emerald-500"
-              >
-                Forgot password?
-              </a>
+            <div className="mb-2">
+              {errors.password && (
+                <p className="text-red-500 text-sm">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
           </CardContent>
-
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
