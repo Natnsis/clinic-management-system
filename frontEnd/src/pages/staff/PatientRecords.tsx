@@ -263,11 +263,6 @@ const PatientRecords = () => {
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
-
-            <Button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2">
-              <FileText className="h-4 w-4" />
-              <span>Generate Report</span>
-            </Button>
           </div>
         </div>
 

@@ -108,8 +108,8 @@ model Staff {
 model Patients {
   id              String         @id @default(uuid())
   fName           String
-  mName           String
   lName           String
+  studentId       String         @unique
   password        String
   email           String         @unique
   lastVisit       DateTime? 
@@ -241,7 +241,9 @@ model PatientProfile {
   patientId         String   @id @unique // One-to-one relationship with Patients
   emergencyContact  String
   year              String
-  major        String
+  phoneNumber       Int
+  address           String
+  major             String
   InsuranceProvider String @default("AssosaUniversity")
   policyNumber      String @default("haha_123456")
   createdAt         DateTime @default(now())

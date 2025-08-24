@@ -294,11 +294,6 @@ const ManagePatients = () => {
                   </option>
                 ))}
             </select>
-
-            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center space-x-2">
-              <Plus className="h-4 w-4" />
-              <span>Add Patient</span>
-            </Button>
           </div>
         </div>
 

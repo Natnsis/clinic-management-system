@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Sidebar from "@/components/admin/Sidebar";
+import { Link } from "react-router-dom";
 
 const ManageStaff = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -306,11 +307,12 @@ const ManageStaff = () => {
                   </option>
                 ))}
             </select>
-
-            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center space-x-2">
-              <Plus className="h-4 w-4" />
-              <span>Add Staff</span>
-            </Button>
+            <Link to="/addStaff">
+              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Add Staff</span>
+              </Button>
+            </Link>
           </div>
         </div>
 

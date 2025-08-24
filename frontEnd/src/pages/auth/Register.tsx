@@ -22,19 +22,33 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerFormSchema } from "@/schemas/userFormSchema";
+
+type userFormValues = z.infer<typeof registerFormSchema>;
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<userFormValues>({
+    resolver: zodResolver(registerFormSchema),
+  });
+
+  const onSubmit = (data: userFormValues) => {
     setIsLoading(true);
-    // Simulate registration process
+    console.log("Validation Passed! Form Data:", data);
     setTimeout(() => {
+      console.log("Validation check complete.");
       setIsLoading(false);
-    }, 2000);
+    }, 1000);
   };
 
   return (
@@ -60,7 +74,7 @@ const Register = () => {
           </CardDescription>
         </CardHeader>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-6">
             {/* Personal Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,10 +91,15 @@ const Register = () => {
                     id="firstName"
                     type="text"
                     placeholder="John"
+                    {...register("firstName")}
                     className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                    required
                   />
                 </div>
+                {errors.firstName && (
+                  <p className="text-sm text-red-500">
+                    {errors.firstName.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -96,10 +115,15 @@ const Register = () => {
                     id="lastName"
                     type="text"
                     placeholder="Doe"
+                    {...register("lastName")}
                     className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                    required
                   />
                 </div>
+                {errors.lastName && (
+                  <p className="text-sm text-red-500">
+                    {errors.lastName.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -114,12 +138,14 @@ const Register = () => {
                 <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <Input
                   id="email"
-                  type="email"
                   placeholder="student@university.edu"
+                  {...register("email")}
                   className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                  required
                 />
               </div>
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -135,10 +161,15 @@ const Register = () => {
                   id="studentId"
                   type="text"
                   placeholder="STU123456"
+                  {...register("studentId")}
                   className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                  required
                 />
               </div>
+              {errors.studentId && (
+                <p className="text-sm text-red-500">
+                  {errors.studentId.message}
+                </p>
+              )}
             </div>
 
             {/* Contact Information */}
@@ -156,10 +187,15 @@ const Register = () => {
                     id="phone"
                     type="tel"
                     placeholder="+1 (555) 123-4567"
+                    {...register("phoneNumber")}
                     className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                    required
                   />
                 </div>
+                {errors.phoneNumber && (
+                  <p className="text-sm text-red-500">
+                    {errors.phoneNumber.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -174,10 +210,15 @@ const Register = () => {
                   <Input
                     id="dob"
                     type="date"
+                    {...register("dateOfBirth")}
                     className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                    required
                   />
                 </div>
+                {errors.dateOfBirth && (
+                  <p className="text-sm text-red-500">
+                    {errors.dateOfBirth.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -186,7 +227,7 @@ const Register = () => {
                 htmlFor="address"
                 className="text-sm font-medium text-gray-700"
               >
-                Campus Address
+                Address
               </Label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -194,10 +235,13 @@ const Register = () => {
                   id="address"
                   type="text"
                   placeholder="Dorm Building, Room 123"
+                  {...register("address")}
                   className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                  required
                 />
               </div>
+              {errors.address && (
+                <p className="text-sm text-red-500">{errors.address.message}</p>
+              )}
             </div>
 
             {/* Academic Information */}
@@ -207,12 +251,12 @@ const Register = () => {
                   htmlFor="faculty"
                   className="text-sm font-medium text-gray-700"
                 >
-                  Faculty
+                  Major
                 </Label>
                 <select
                   id="faculty"
+                  {...register("major")}
                   className="w-full p-2 border border-gray-200 rounded-md focus:border-emerald-500 focus:ring-emerald-500 bg-white"
-                  required
                 >
                   <option value="">Select Faculty</option>
                   <option value="medicine">Medicine</option>
@@ -222,6 +266,9 @@ const Register = () => {
                   <option value="science">Science</option>
                   <option value="law">Law</option>
                 </select>
+                {errors.major && (
+                  <p className="text-sm text-red-500">{errors.major.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -233,8 +280,8 @@ const Register = () => {
                 </Label>
                 <select
                   id="year"
+                  {...register("academicYear")}
                   className="w-full p-2 border border-gray-200 rounded-md focus:border-emerald-500 focus:ring-emerald-500 bg-white"
-                  required
                 >
                   <option value="">Select Year</option>
                   <option value="1">1st Year</option>
@@ -243,6 +290,11 @@ const Register = () => {
                   <option value="4">4th Year</option>
                   <option value="5">5th Year</option>
                 </select>
+                {errors.academicYear && (
+                  <p className="text-sm text-red-500">
+                    {errors.academicYear.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -260,8 +312,8 @@ const Register = () => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
+                  {...register("password")}
                   className="pl-10 pr-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                  required
                 />
                 <button
                   type="button"
@@ -275,10 +327,11 @@ const Register = () => {
                   )}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Password must be at least 8 characters with letters, numbers,
-                and special characters
-              </p>
+              {errors.password && (
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -294,8 +347,8 @@ const Register = () => {
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
+                  {...register("confirmPassword")}
                   className="pl-10 pr-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
-                  required
                 />
                 <button
                   type="button"
@@ -309,33 +362,43 @@ const Register = () => {
                   )}
                 </button>
               </div>
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-6">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <input
-                type="checkbox"
-                id="terms"
-                className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                required
-              />
-              <label htmlFor="terms">
-                I agree to the{" "}
-                <a
-                  href="#"
-                  className="text-emerald-600 hover:text-emerald-500 font-medium"
-                >
-                  Terms of Service
-                </a>{" "}
-                and{" "}
-                <a
-                  href="#"
-                  className="text-emerald-600 hover:text-emerald-500 font-medium"
-                >
-                  Privacy Policy
-                </a>
-              </label>
+          <CardFooter className="flex flex-col space-y-6 mt-2">
+            <div className="flex flex-col space-y-1 text-sm text-gray-600">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  {...register("terms")}
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <label htmlFor="terms">
+                  I agree to the{" "}
+                  <a
+                    href="#"
+                    className="text-emerald-600 hover:text-emerald-500 font-medium"
+                  >
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="#"
+                    className="text-emerald-600 hover:text-emerald-500 font-medium"
+                  >
+                    Privacy Policy
+                  </a>
+                </label>
+              </div>
+              {errors.terms && (
+                <p className="text-sm text-red-500">{errors.terms.message}</p>
+              )}
             </div>
 
             <Button
