@@ -50,3 +50,26 @@ export const registerFormSchema = z
     message: "Passwords don't match.",
     path: ["confirmPassword"],
   });
+
+export const addStaffFromSchema = z.object({
+  firstName: z
+    .string()
+    .nonempty("please enter first name")
+    .min(3, "first name must be at least 3 characters"),
+  lastName: z
+    .string()
+    .nonempty("please enter last name")
+    .min(3, "last name must be at least 3 characters"),
+  email: z.string().email("please enter a valid email"),
+  phoneNumber: z
+    .number()
+    .min(10, "phone number is at least 10 character")
+    .max(13, "phone number cant be more than 13 character"),
+  role: z.string().nonempty("select a role"),
+  department: z.string().nonempty("select a department"),
+  availability: z.string().nonempty("select availability"),
+  password: z
+    .string()
+    .min(4, "password must have at least 4 characters")
+    .nonempty(),
+});
