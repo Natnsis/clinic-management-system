@@ -11,16 +11,21 @@ import {
 } from "@/components/ui/card";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginFormSchema } from "@/schemas/userFormSchema";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuthStore } from "@/store/authStore";
 
 type UserFormValues = z.infer<typeof loginFormSchema>;
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const login = useAuthStore((state) => state.login);
 
   const {
     register,
@@ -30,13 +35,17 @@ const Login = () => {
     resolver: zodResolver(loginFormSchema),
   });
 
-  const onSubmit = (data: UserFormValues) => {
+  const onSubmit = async (data: UserFormValues) => {
     setIsLoading(true);
-    console.log("Validation Passed! Form Data:", data);
-    setTimeout(() => {
-      console.log("Validation check complete.");
+    try {
+      await login(data);
+      navigate("/dashboard");
+    } catch (error: any) {
+      console.error("Login failed", error);
+      alert("Invalid email or password");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -58,6 +67,7 @@ const Login = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
+            {/* Email */}
             <div className="space-y-2">
               <Label
                 htmlFor="email"
@@ -75,13 +85,12 @@ const Login = () => {
                   className="pl-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500"
                 />
               </div>
-              <div className="my-2">
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
-              </div>
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
             </div>
 
+            {/* Password */}
             <div className="space-y-2">
               <Label
                 htmlFor="password"
@@ -110,8 +119,6 @@ const Login = () => {
                   )}
                 </button>
               </div>
-            </div>
-            <div className="mb-2">
               {errors.password && (
                 <p className="text-red-500 text-sm">
                   {errors.password.message}
@@ -119,6 +126,7 @@ const Login = () => {
               )}
             </div>
           </CardContent>
+
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
