@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Calendar,
   Search,
@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import StaffSidebar from "@/components/staff/StaffSidebar";
+import { Link } from "react-router-dom";
 
 const AppointmentSchedule = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -265,11 +266,12 @@ const AppointmentSchedule = () => {
                   </option>
                 ))}
             </select>
-
-            <Button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2">
-              <Plus className="h-4 w-4" />
-              <span>Schedule Appointment</span>
-            </Button>
+            <Link to="/appointmentAddingForm">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Schedule Appointment</span>
+              </Button>
+            </Link>
           </div>
         </div>
 

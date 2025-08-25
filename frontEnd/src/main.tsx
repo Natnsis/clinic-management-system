@@ -29,6 +29,7 @@ import NotFound from "./NotFound.tsx";
 import StaffNotifications from "./pages/staff/StaffNotifications.tsx";
 import StaffPerscriptions from "./pages/staff/StaffPerscriptions.tsx";
 import AddStaffForm from "./components/forms/addStaffForm.tsx";
+import AppointmentAddingForm from "./components/forms/appointmentAddingForm.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -60,6 +61,7 @@ const router = createBrowserRouter([
   { path: "/staffPrescriptions", element: <StaffPerscriptions /> },
   { path: "/staffProfile", element: <StaffProfile /> },
   { path: "/addStaff", element: <AddStaffForm /> },
+  { path: "/appointmentAddingForm", element: <AppointmentAddingForm /> },
   { path: "*", element: <NotFound /> },
 ]);
 
