@@ -7,14 +7,22 @@ import {
   MessageCircle,
   User,
   LayoutDashboard,
+  LogOut,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/authStore"; // if you have the auth store
 
 const StaffSidebar = () => {
   const [activeItem, setActiveItem] = useState("dashboard");
-
   const handleItemClick = (item: string) => {
     setActiveItem(item);
+  };
+
+  const logout = useAuthStore((state) => state.logout); // if using Zustand
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   const menuItems = [
@@ -60,12 +68,7 @@ const StaffSidebar = () => {
       key: "messages",
       link: "/staffMessages",
     },
-    {
-      icon: User,
-      label: "Profile",
-      key: "profile",
-      link: "/staffProfile",
-    },
+    { icon: User, label: "Profile", key: "profile", link: "/staffProfile" },
   ];
 
   return (
@@ -113,6 +116,15 @@ const StaffSidebar = () => {
               </button>
             </div>
           ))}
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 p-3 mt-4 rounded-xl font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 shadow-md transition-all duration-200"
+          >
+            <LogOut className="h-5 w-5" />
+            Logout
+          </button>
         </div>
       </nav>
 

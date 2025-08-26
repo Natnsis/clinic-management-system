@@ -8,6 +8,7 @@ import prescriptionsRoute from "./routes/prescriptionRoutes";
 import recordRoute from "./routes/recordRoutes";
 import feedbackRoutes from "./routes/feedbackRoutes";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 //constants
 const app = express();
@@ -15,6 +16,7 @@ const PORT = 4000;
 
 //built in middlewares
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",

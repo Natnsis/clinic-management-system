@@ -24,7 +24,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
   const login = useAuthStore((state) => state.login);
 
   const {
@@ -39,7 +38,12 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(data);
-      navigate("/dashboard");
+
+      const role = useAuthStore.getState().user?.role;
+
+      if (role === "admin") navigate("/dashboard");
+      else if (role === "staff") navigate("/staffDashboard");
+      else navigate("/patientDashboard");
     } catch (error: any) {
       console.error("Login failed", error);
       alert("Invalid email or password");
@@ -50,8 +54,8 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-none shadow-2xl bg-white/80 backdrop-blur-sm">
-        <CardHeader className="space-y-1 text-center">
+      <Card className="w-full max-w-md shadow-2xl bg-white/80 backdrop-blur-sm border-none rounded-2xl">
+        <CardHeader className="text-center space-y-2 pt-8">
           <div className="flex justify-center mb-2">
             <div className="h-12 w-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center">
               <div className="h-6 w-6 bg-white rounded-full"></div>
@@ -66,9 +70,9 @@ const Login = () => {
         </CardHeader>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6 pt-4 pb-2">
             {/* Email */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label
                 htmlFor="email"
                 className="text-sm font-medium text-gray-700"
@@ -91,7 +95,7 @@ const Login = () => {
             </div>
 
             {/* Password */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label
                 htmlFor="password"
                 className="text-sm font-medium text-gray-700"
@@ -127,15 +131,15 @@ const Login = () => {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 pt-2 pb-8">
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white h-11 text-base"
+              className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-base font-semibold"
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="flex items-center">
-                  <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                <div className="flex items-center justify-center gap-2">
+                  <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   Signing in...
                 </div>
               ) : (

@@ -8,18 +8,23 @@ import {
   User,
   LogOut,
   Search,
-  Sun,
-  Moon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/authStore";
 
 const Header = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/patientDashboard" },
@@ -92,20 +97,6 @@ const Header = () => {
               </Button>
             </Link>
 
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className="text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"
-            >
-              {isDarkMode ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </Button>
-
             {/* User Menu */}
             <div className="relative">
               <Button
@@ -146,7 +137,7 @@ const Header = () => {
                   <hr className="my-2 mx-2" />
                   <button
                     className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors rounded-lg mx-2 my-1"
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4 mr-3" />
                     Sign Out

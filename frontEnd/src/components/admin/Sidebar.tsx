@@ -1,17 +1,17 @@
+import { useAuthStore } from "@/store/authStore";
 import {
   LayoutDashboard,
   ClipboardMinus,
   Users,
   MessageCircle,
   Bell,
-  Settings,
   User,
+  LogOut,
 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
-  const [openMenus, setOpenMenus] = useState({});
   const [activeItem, setActiveItem] = useState("dashboard");
 
   const toggleMenu = (menu) => {
@@ -23,6 +23,14 @@ const Sidebar = () => {
 
   const handleItemClick = (item) => {
     setActiveItem(item);
+  };
+
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   const menuItems = [
@@ -113,6 +121,13 @@ const Sidebar = () => {
               </Link>
             </div>
           ))}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 p-3 rounded-xl font-semibold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-md transition-all duration-200"
+          >
+            <LogOut className="h-5 w-5" />
+            Logout
+          </button>
         </div>
       </nav>
 
