@@ -26,6 +26,47 @@ type StaffStore = {
   deleteStaff: (id: string) => Promise<void>;
 };
 
+//patientTypes
+type patient = {
+  id: string;
+  fName: string;
+  lName: string;
+  studentId: string;
+  password: string;
+  email: string;
+  lastVisit: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type PatientStore = {
+  patients: patient[];
+  isLoading: boolean;
+  error: null;
+  fetchPatients: () => Promise<void>;
+  updatePatients: (id: string, patient: Partial<patient>) => Promise<void>;
+  deletePatients: (id: string) => Promise<void>;
+};
+
+//appointment types
+type appointment = {
+  patientId: string;
+  staffId: string;
+  reason: string;
+  status: string;
+  note: string;
+  location: string;
+};
+
+type AppointmentStore = {
+  appointments: appointment[];
+  isLoading: boolean;
+  error: null;
+  addAppointment: (appointment: appointment) => Promise<void>;
+  fetchAppointment: () => Promise<void>;
+  updateAppointment: (id: string, appointment: appointment) => Promise<void>;
+  deleteAppointment: (id: string) => Promise<void>;
+};
 
 //api definition
 const api = axios.create({
@@ -84,6 +125,122 @@ export const useStaffStore = create<StaffStore>((set, get) => ({
   },
 }));
 
-export const usePatientStore = create((set.get)=>({
+export const usePatientStore = create<PatientStore>((set, get) => ({
+  patients: [],
+  isLoading: false,
+  error: null,
 
-}))
+  fetchPatients: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.get("/patients");
+      set({ patients: res.data, isLoading: false });
+    } catch (err: any) {
+      set({
+        error: err.message || "Failed to fetch patients",
+        isLoading: false,
+      });
+    }
+  },
+
+  updatePatients: async (id, patient) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.put(`/patients/${id}`, patient);
+      set({
+        patients: get().patients.map((p) => (p.id === id ? res.data : p)),
+        isLoading: false,
+      });
+    } catch (err: any) {
+      set({
+        error: err.message || "Failed to update patient",
+        isLoading: false,
+      });
+    }
+  },
+
+  deletePatients: async (id) => {
+    set({ isLoading: true, error: null });
+    try {
+      await api.delete(`/patients/${id}`);
+      set({
+        patients: get().patients.filter((p) => p.id !== id),
+        isLoading: false,
+      });
+    } catch (err: any) {
+      set({
+        error: err.message || "Failed to delete patient",
+        isLoading: false,
+      });
+    }
+  },
+}));
+
+export const useAppointmentStore = create<AppointmentStore>((set, get) => ({
+  appointments: [],
+  isLoading: false,
+  error: null,
+
+  fetchAppointment: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.get("/appointments");
+      set({ appointments: res.data, isLoading: false });
+    } catch (err: any) {
+      set({
+        error: err.message || "Failed to fetch appointments",
+        isLoading: false,
+      });
+    }
+  },
+
+  addAppointment: async (appointment: appointment) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.post("/appointments", appointment);
+      set({
+        appointments: [...get().appointments, res.data],
+        isLoading: false,
+      });
+    } catch (err: any) {
+      set({
+        error: err.message || "Failed to add appointment",
+        isLoading: false,
+      });
+    }
+  },
+
+  updateAppointment: async (id: string, data: appointment) => {
+    set({ isLoading: true, error: null });
+    try {
+      const res = await api.put(`/appointments/${id}`, data);
+      set({
+        appointments: get().appointments.map((a) =>
+          a.id === id ? res.data : a
+        ),
+        isLoading: false,
+      });
+    } catch (err: any) {
+      set({
+        error: err.message || "Failed to update appointment",
+        isLoading: false,
+      });
+    }
+  },
+
+  deleteAppointment: async (id: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      await api.delete(`/appointments/${id}`);
+      set({
+        appointments: get().appointments.filter((a) => a.id !== id),
+        isLoading: false,
+      });
+    } catch (err: any) {
+      set({
+        error: err.message || "Failed to delete appointment",
+        isLoading: false,
+      });
+    }
+  },
+}));
