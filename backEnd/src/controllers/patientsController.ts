@@ -49,7 +49,6 @@ export async function updatePatient(req: Request, res: Response) {
       where: { id: userId },
       data: {
         fName: userInfo.fName,
-        mName: userInfo.mName,
         lName: userInfo.lName,
         updatedAt: new Date(),
       },

@@ -26,11 +26,11 @@ const generateTokens = (userId: string, role: string, email?: string) => {
 
 // REGISTER
 export const register = async (req: Request, res: Response) => {
-  const { fName, mName, lName, email, password } = req.body;
+  const { fName, lName, email, password, studentId } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.patients.create({
-      data: { fName, mName, lName, email, password: hashedPassword },
+      data: { fName, lName, email, password: hashedPassword, studentId },
     });
     res.status(201).json({ message: "User registered", userId: user.id });
   } catch (err) {
