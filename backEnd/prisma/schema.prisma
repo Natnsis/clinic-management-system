@@ -85,13 +85,12 @@ model Admin {
 model Staff {
   id           String       @id @default(uuid())
   fName        String
-  mName        String
   lName        String
   email        String       @unique
   password     String
   department   Department
   role         Role
-  status       Status
+  status       Status     @default(inactive)
   availability Availability
   phoneNumber  Int
   createdAt    DateTime     @default(now())
