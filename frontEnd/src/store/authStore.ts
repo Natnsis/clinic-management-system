@@ -31,7 +31,7 @@ type AuthStore = {
 
 // ---------- Axios Instance ----------
 const api = axios.create({
-  baseURL: "http://localhost:4000/auth",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
@@ -43,7 +43,7 @@ export const useAuthStore = create<AuthStore>()(
       user: null,
 
       login: async (userData: UserData) => {
-        const res = await api.post("/login", userData);
+        const res = await api.post("/auth/login", userData);
         const token = res.data.accessToken;
         const user = jwtDecode<TokenPayload>(token);
         set({ token, user });
@@ -51,7 +51,7 @@ export const useAuthStore = create<AuthStore>()(
 
       register: async (userData: UserFormValues) => {
         try {
-          await api.post("/register", userData);
+          await api.post("/auth/register", userData);
         } catch (err: any) {
           console.error(
             "Registration failed:",
@@ -67,7 +67,7 @@ export const useAuthStore = create<AuthStore>()(
 
       refresh: async () => {
         try {
-          const res = await api.post("/refresh");
+          const res = await api.post("/auth/refresh");
           const token = res.data.accessToken;
           const user = jwtDecode<TokenPayload>(token);
           set({ token, user });

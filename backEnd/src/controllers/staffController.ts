@@ -11,7 +11,6 @@ export async function addStaff(req: Request, res: Response) {
     await prisma.staff.create({
       data: {
         fName: staffData.fName,
-        mName: staffData.mName,
         lName: staffData.lName,
         email: staffData.email,
         password: hashedPassword,
@@ -78,7 +77,6 @@ export async function updateStaff(req: Request, res: Response) {
       where: { id: userId },
       data: {
         fName: userInfo.fName,
-        mName: userInfo.mName,
         lName: userInfo.lName,
         department: userInfo.department,
         role: userInfo.role,
