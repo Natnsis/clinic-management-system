@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import type { registerFormSchema } from "@/schemas/userFormSchema";
+import { z } from "zod";
 
 // ---------- Types ----------
 type UserData = {
@@ -15,6 +17,7 @@ type TokenPayload = {
   exp: number; // expiry (seconds since epoch)
   iat: number; // issued at
 };
+type UserFormValues = z.infer<typeof registerFormSchema>;
 
 type AuthStore = {
   token: string | null;
@@ -23,6 +26,7 @@ type AuthStore = {
   logout: () => void;
   refresh: () => Promise<void>;
   isTokenExpired: () => boolean;
+  register: (userData: UserFormValues) => Promise<void>;
 };
 
 // ---------- Axios Instance ----------
@@ -43,6 +47,18 @@ export const useAuthStore = create<AuthStore>()(
         const token = res.data.accessToken;
         const user = jwtDecode<TokenPayload>(token);
         set({ token, user });
+      },
+
+      register: async (userData: UserFormValues) => {
+        try {
+          await api.post("/register", userData);
+        } catch (err: any) {
+          console.error(
+            "Registration failed:",
+            err.response?.data?.message || err.message
+          );
+          throw err;
+        }
       },
 
       logout: () => {
@@ -78,7 +94,6 @@ api.interceptors.request.use((config) => {
   const { token, isTokenExpired, refresh } = useAuthStore.getState();
 
   if (token) {
-    // refresh proactively if expired
     if (isTokenExpired()) {
       refresh();
     }
@@ -87,7 +102,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Retry request if 401 (token expired)
+// Retry request if 401
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
@@ -96,7 +111,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const { refresh, token } = useAuthStore.getState();
+      const { refresh } = useAuthStore.getState();
       await refresh();
 
       const newToken = useAuthStore.getState().token;
