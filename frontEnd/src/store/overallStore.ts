@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-// Generic CRUD store type
+// Generic store type
 type EntityStore<T> = {
   items: T[];
   isLoading: boolean;

@@ -36,7 +36,7 @@ export const addStaffFromSchema = z.object({
     .min(3, "last name must be at least 3 characters"),
   email: z.string().email("please enter a valid email"),
   phoneNumber: z
-    .number()
+    .string()
     .min(10, "phone number is at least 10 character")
     .max(13, "phone number cant be more than 13 character"),
   role: z.string().nonempty("select a role"),

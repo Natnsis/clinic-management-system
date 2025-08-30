@@ -20,14 +20,14 @@ export async function addStaff(req: Request, res: Response) {
     const hashedPassword = await bcrypt.hash(password, 10);
     await prisma.staff.create({
       data: {
-        fName: fName,
-        lName: lName,
-        email: email,
+        fName,
+        lName,
+        email,
         password: hashedPassword,
-        department: department,
-        role: role,
-        status: status,
-        availability: availability,
+        department,
+        role,
+        status,
+        availability,
         phoneNumber: parseInt(phoneNumber),
       },
     });

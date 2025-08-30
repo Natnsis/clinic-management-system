@@ -59,7 +59,7 @@ const Login = () => {
           alert("Your role is not recognized. Contact admin.");
           break;
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Login failed", error);
       alert("Invalid email or password");
     } finally {

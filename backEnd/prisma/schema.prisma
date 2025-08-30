@@ -27,8 +27,6 @@ enum Role {
   physician
   nurse
   receptionist
-  doctor
-  technician
 }
 
 enum Status {
