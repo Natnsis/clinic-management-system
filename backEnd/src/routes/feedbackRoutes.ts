@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post("/", sendFeedback);
 router.get("/", getAllFeedbacks);
-router.get("/", getPatientFeedbackById);
+router.get("/:id", getPatientFeedbackById);
 router.put("/:id", updateFeedback);
 router.delete("/:id", deleteFeedback);
 

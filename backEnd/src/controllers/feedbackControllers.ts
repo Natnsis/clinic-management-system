@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 
 export async function sendFeedback(req: Request, res: Response) {
   try {
-    const { feedbackInfo } = req.body;
+    const { patientId, status, content, rate } = req.body;
     await prisma.feedbacks.create({
       data: {
-        patientId: feedbackInfo.patientId,
-        status: feedbackInfo.status,
-        content: feedbackInfo.content,
-        rate: feedbackInfo.rate,
+        patientId,
+        status,
+        content,
+        rate: parseInt(rate),
       },
     });
     return res.status(200).json({ message: "feedback sent successfully!" });
@@ -35,13 +35,14 @@ export async function deleteFeedback(req: Request, res: Response) {
 export async function updateFeedback(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    const { feedbackInfo } = req.body;
+    const { status, content, rate } = req.body;
+
     await prisma.feedbacks.update({
       where: { id },
       data: {
-        status: feedbackInfo.status,
-        content: feedbackInfo.content,
-        rate: feedbackInfo.rate,
+        status,
+        content,
+        rate: parseInt(rate),
       },
     });
   } catch (e) {
@@ -66,7 +67,7 @@ export async function getPatientFeedbackById(req: Request, res: Response) {
     const patientFeedbacks = await prisma.feedbacks.findMany({
       where: { patientId: id },
     });
-    return res.status(200).json({ message: patientFeedbacks });
+    return res.status(200).json({ patientFeedbacks });
   } catch (e) {
     return res.status(500).json({ message: "unable fetch feedbacks!" });
   }
