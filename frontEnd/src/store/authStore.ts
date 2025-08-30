@@ -14,55 +14,67 @@ type UserData = {
 type TokenPayload = {
   userId: string;
   role: string;
-  exp: number; // expiry (seconds since epoch)
-  iat: number; // issued at
+  exp: number;
+  iat: number;
 };
+
 type UserFormValues = z.infer<typeof registerFormSchema>;
 
 type AuthStore = {
   token: string | null;
   user: TokenPayload | null;
+  error: string | null;
   login: (userData: UserData) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   refresh: () => Promise<void>;
   isTokenExpired: () => boolean;
+  isTokenExpiringSoon: () => boolean;
   register: (userData: UserFormValues) => Promise<void>;
 };
 
-// ---------- Axios Instance ----------
+//axios api
 const api = axios.create({
-  baseURL: import.meta.env.API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
-// ---------- Zustand Store ----------
+//zustand
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set, get) => ({
       token: null,
       user: null,
+      error: null,
 
       login: async (userData: UserData) => {
-        const res = await api.post("/auth/login", userData);
-        const token = res.data.accessToken;
-        const user = jwtDecode<TokenPayload>(token);
-        set({ token, user });
+        try {
+          const res = await api.post("/auth/login", userData);
+          const token = res.data.accessToken;
+          const user = jwtDecode<TokenPayload>(token);
+          set({ token, user, error: null });
+        } catch (err: any) {
+          set({ error: err.response?.data?.message || err.message });
+          throw err;
+        }
       },
 
       register: async (userData: UserFormValues) => {
         try {
           await api.post("/auth/register", userData);
+          set({ error: null });
         } catch (err: any) {
-          console.error(
-            "Registration failed:",
-            err.response?.data?.message || err.message
-          );
+          set({ error: err.response?.data?.message || err.message });
           throw err;
         }
       },
 
-      logout: () => {
-        set({ token: null, user: null });
+      logout: async () => {
+        try {
+          await api.post("/auth/logout"); // optional backend logout endpoint
+        } catch (err) {
+          console.warn("Logout request failed:", err);
+        }
+        set({ token: null, user: null, error: null });
       },
 
       refresh: async () => {
@@ -71,9 +83,11 @@ export const useAuthStore = create<AuthStore>()(
           const token = res.data.accessToken;
           const user = jwtDecode<TokenPayload>(token);
           set({ token, user });
+          return token;
         } catch (err) {
           console.error("Refresh failed:", err);
           set({ token: null, user: null });
+          return null;
         }
       },
 
@@ -82,42 +96,49 @@ export const useAuthStore = create<AuthStore>()(
         if (!user?.exp) return true;
         return Date.now() >= user.exp * 1000;
       },
+
+      isTokenExpiringSoon: () => {
+        const { user } = get();
+        if (!user?.exp) return true;
+        return Date.now() >= user.exp * 1000 - 30_000; // 30s buffer
+      },
     }),
     { name: "auth-storage" }
   )
 );
 
-// ---------- Axios Interceptors ----------
-
-// Attach token to every request
+// Request interceptor: just attach token if it exists
 api.interceptors.request.use((config) => {
-  const { token, isTokenExpired, refresh } = useAuthStore.getState();
-
+  const token = useAuthStore.getState().token;
   if (token) {
-    if (isTokenExpired()) {
-      refresh();
-    }
-    config.headers.Authorization = `Bearer ${useAuthStore.getState().token}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Retry request if 401
+// Response interceptor: refresh token only if 401 occurs
 api.interceptors.response.use(
-  (res) => res,
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
+    // Only retry once to prevent infinite loop
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const { refresh } = useAuthStore.getState();
-      await refresh();
+      try {
+        // Refresh token
+        await useAuthStore.getState().refresh();
 
-      const newToken = useAuthStore.getState().token;
-      if (newToken) {
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return api(originalRequest);
+        // Get new token
+        const newToken = useAuthStore.getState().token;
+        if (newToken) {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return api(originalRequest); // retry original request
+        }
+      } catch (err) {
+        console.error("Token refresh failed:", err);
+        // Optional: logout user here if refresh fails
       }
     }
 

@@ -118,7 +118,7 @@ model Patients {
   email           String         @unique
   lastVisit       DateTime? 
   createdAt       DateTime       @default(now())
-  updatedAt       DateTime?       @updatedAt
+  updatedAt       DateTime?      @updatedAt
 
   // Relationships
   patientProfile  PatientProfile?

@@ -38,12 +38,27 @@ const Login = () => {
     setIsLoading(true);
     try {
       await login(data);
-
-      const role = useAuthStore.getState().user?.role;
-
-      if (role === "admin") navigate("/dashboard");
-      else if (role === "staff") navigate("/staffDashboard");
-      else navigate("/patientDashboard");
+      const user = useAuthStore.getState().user;
+      if (!user || !user.role) {
+        console.error("Login succeeded but no role found in JWT:", user);
+        alert("Login succeeded but we couldn't detect your role.");
+        return;
+      }
+      switch (user.role.toLowerCase()) {
+        case "admin":
+          navigate("/dashboard");
+          break;
+        case "staff":
+          navigate("/staffDashboard");
+          break;
+        case "patient":
+          navigate("/patientDashboard");
+          break;
+        default:
+          console.warn("Unknown role:", user.role);
+          alert("Your role is not recognized. Contact admin.");
+          break;
+      }
     } catch (error: any) {
       console.error("Login failed", error);
       alert("Invalid email or password");

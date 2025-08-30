@@ -28,11 +28,11 @@ export async function deleteRecords(req: Request, res: Response) {
 export async function addRecord(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    const { recordInfo } = req.body;
+    const { treatment, illness } = req.body;
     await prisma.records.create({
       data: {
-        treatment: recordInfo.treatment,
-        illness: recordInfo.illness,
+        treatment,
+        illness,
         patient: {
           connect: { id: id },
         },
