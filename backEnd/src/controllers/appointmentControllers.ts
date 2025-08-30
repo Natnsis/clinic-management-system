@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { Prisma, PrismaClient } from "@prisma/client";
-import { resolveSoa } from "dns";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -15,15 +14,15 @@ export async function getAllAppointments(req: Request, res: Response) {
 
 export async function addAppointments(req: Request, res: Response) {
   try {
-    const appointmentInfo = req.body;
+    const { patientId, staffId, reason, status, note, location } = req.body;
     await prisma.appointments.create({
       data: {
-        patientId: appointmentInfo.pId,
-        staffId: appointmentInfo.sId,
-        reason: appointmentInfo.reason,
-        status: appointmentInfo.status,
-        note: appointmentInfo.note,
-        location: appointmentInfo.location,
+        patientId,
+        staffId,
+        reason,
+        status,
+        note,
+        location,
       },
     });
 
@@ -48,16 +47,17 @@ export async function deleteAppointments(req: Request, res: Response) {
 export async function updateAppointment(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    const { appointmentInfo } = req.body;
+    const { patientId, staffId, reason, status, note, location } = req.body;
+
     const updated = await prisma.appointments.update({
       where: { id },
       data: {
-        patientId: appointmentInfo.pId,
-        staffId: appointmentInfo.sId,
-        reason: appointmentInfo.reason,
-        status: appointmentInfo.status,
-        note: appointmentInfo.note,
-        location: appointmentInfo.location,
+        patientId,
+        staffId,
+        reason,
+        status,
+        note,
+        location,
       },
     });
 
