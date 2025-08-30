@@ -72,6 +72,11 @@ enum Refills {
   four_refills
 }
 
+enum Sender{
+  patient
+  staff
+}
+
 //models
 
 model Admin {
@@ -213,6 +218,7 @@ model Message {
   content   String
   patientId String
   staffId   String
+  sender    Sender
   time      DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

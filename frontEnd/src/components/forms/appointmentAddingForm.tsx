@@ -16,7 +16,7 @@ import StaffSidebar from "@/components/staff/StaffSidebar";
 import { Link } from "react-router-dom";
 
 const AppointmentAddingForm = () => {
-  const [step, setStep] = useState(1); // 1: Select Patient, 2: Select Date/Time, 3: Confirm
+  const [step, setStep] = useState(1); 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");

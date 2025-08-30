@@ -6,24 +6,34 @@ const prisma = new PrismaClient();
 
 export async function addStaff(req: Request, res: Response) {
   try {
-    const staffData = req.body;
-    const hashedPassword = await bcrypt.hash(staffData.password, 10);
+    const {
+      fName,
+      lName,
+      email,
+      password,
+      department,
+      role,
+      status,
+      availability,
+      phoneNumber,
+    } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
     await prisma.staff.create({
       data: {
-        fName: staffData.fName,
-        lName: staffData.lName,
-        email: staffData.email,
+        fName: fName,
+        lName: lName,
+        email: email,
         password: hashedPassword,
-        department: staffData.department,
-        role: staffData.role,
-        status: staffData.status,
-        availability: staffData.availability,
-        phoneNumber: parseInt(staffData.phoneNumber),
+        department: department,
+        role: role,
+        status: status,
+        availability: availability,
+        phoneNumber: parseInt(phoneNumber),
       },
     });
     return res
       .status(201)
-      .json({ message: "staff member added successfully!", staff: staffData });
+      .json({ message: "staff member added successfully!" });
   } catch (e) {
     return res.status(500).json({ message: "unable to add staff member!" });
   }
@@ -72,17 +82,25 @@ export async function getStaffById(req: Request, res: Response) {
 export async function updateStaff(req: Request, res: Response) {
   try {
     const { userId } = req.params;
-    const { userInfo } = req.body;
+    const {
+      fName,
+      lName,
+      department,
+      role,
+      status,
+      availability,
+      phoneNumber,
+    } = req.body;
     await prisma.staff.update({
       where: { id: userId },
       data: {
-        fName: userInfo.fName,
-        lName: userInfo.lName,
-        department: userInfo.department,
-        role: userInfo.role,
-        status: userInfo.status,
-        availability: userInfo.availability,
-        phoneNumber: parseInt(userInfo.phoneNumber),
+        fName: fName,
+        lName: lName,
+        department: department,
+        role: role,
+        status: status,
+        availability: availability,
+        phoneNumber: parseInt(phoneNumber),
         updatedAt: new Date(),
       },
     });
