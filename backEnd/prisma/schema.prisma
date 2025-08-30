@@ -163,7 +163,7 @@ model Prescriptions {
   staffId    String
   medication String
   detail     String
-  duration   DateTime
+  duration   String
   refills    Refills
   frequency  String
   createdAt  DateTime @default(now())

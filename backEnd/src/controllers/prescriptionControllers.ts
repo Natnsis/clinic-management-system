@@ -5,17 +5,24 @@ const prisma = new PrismaClient();
 
 export async function addPrescription(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const { info } = req.body;
+    const {
+      patientId,
+      staffId,
+      medication,
+      detail,
+      duration,
+      refills,
+      frequency,
+    } = req.body;
     await prisma.prescriptions.create({
       data: {
-        patientId: id,
-        staffId: info.staffId,
-        medication: info.medication,
-        detail: info.detail,
-        duration: info.duration,
-        refills: info.refills,
-        frequency: info.frequency,
+        patientId,
+        staffId,
+        medication,
+        detail,
+        duration,
+        refills,
+        frequency,
       },
     });
     return res
@@ -29,15 +36,15 @@ export async function addPrescription(req: Request, res: Response) {
 export async function updatePrescription(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    const { info } = req.body;
+    const { medication, detail, duration, refills, frequency } = req.body;
     await prisma.prescriptions.update({
       where: { id },
       data: {
-        medication: info.medication,
-        detail: info.detail,
-        duration: info.duration,
-        refills: info.refills,
-        frequency: info.frequency,
+        medication,
+        detail,
+        duration,
+        refills,
+        frequency,
       },
     });
     return res
@@ -64,12 +71,10 @@ export async function getPrescriptionForPatient(req: Request, res: Response) {
   try {
     const { id } = req.params;
     const patientPrescription = await prisma.prescriptions.findMany({
-      where: { id },
+      where: { patientId: id },
     });
     return res.status(200).json(patientPrescription);
   } catch (e) {
     return res.status(500).json({ message: "unable to fetch prescriptions" });
   }
 }
-
-
