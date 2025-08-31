@@ -26,7 +26,6 @@ const StaffSidebar = () => {
 
   const getUserData = useStaffStore((state) => state.fetchItemsById);
   const staffs = useStaffStore((state) => state.items as Staff[]);
-  console.log(staffs);
   useEffect(() => {
     if (id) {
       getUserData(id);

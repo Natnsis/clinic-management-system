@@ -27,7 +27,7 @@ app.use(
 // routes
 app.use("/auth", authRouter);
 app.use("/patients", patientsRoute);
-app.use("/appointment", appointmentRoute);
+app.use("/appointments", appointmentRoute);
 app.use("/staff", staffRoute);
 app.use("/prescriptions", prescriptionsRoute);
 app.use("/records", recordRoute);
