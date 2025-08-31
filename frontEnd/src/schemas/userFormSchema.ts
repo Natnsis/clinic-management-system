@@ -26,11 +26,11 @@ export const registerFormSchema = z
   });
 
 export const addStaffFromSchema = z.object({
-  firstName: z
+  fName: z
     .string()
     .nonempty("please enter first name")
     .min(3, "first name must be at least 3 characters"),
-  lastName: z
+  lName: z
     .string()
     .nonempty("please enter last name")
     .min(3, "last name must be at least 3 characters"),

@@ -13,7 +13,6 @@ export async function addStaff(req: Request, res: Response) {
       password,
       department,
       role,
-      status,
       availability,
       phoneNumber,
     } = req.body;
@@ -26,7 +25,6 @@ export async function addStaff(req: Request, res: Response) {
         password: hashedPassword,
         department,
         role,
-        status,
         availability,
         phoneNumber: parseInt(phoneNumber),
       },

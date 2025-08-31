@@ -18,12 +18,14 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addStaffFromSchema } from "@/schemas/userFormSchema";
+import { useStaffStore } from "@/store/overallStore";
 
 type staffFormValues = z.infer<typeof addStaffFromSchema>;
 
 const AddStaffForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const registerStaff = useStaffStore((state) => state.addItem);
 
   const {
     register,
@@ -33,11 +35,10 @@ const AddStaffForm = () => {
     resolver: zodResolver(addStaffFromSchema),
   });
 
-  const onSubmit = (data: staffFormValues) => {
+  const onSubmit = async (data: staffFormValues) => {
     setIsSubmitting(true);
-    console.log("validation passed form data:", data);
+    await registerStaff(data);
     setTimeout(() => {
-      console.log("Validation check complete.");
       setShowSuccess(true);
       setIsSubmitting(false);
     }, 1000);
@@ -116,12 +117,12 @@ const AddStaffForm = () => {
                       id="firstName"
                       placeholder="Enter first name"
                       className="pl-10 border-gray-200 focus:ring-2 focus:ring-emerald-500"
-                      {...register("firstName")}
+                      {...register("fName")}
                     />
                   </div>
-                  {errors.firstName && (
+                  {errors.fName && (
                     <p className="text-sm text-red-600">
-                      {errors.firstName.message}
+                      {errors.fName.message}
                     </p>
                   )}
                 </div>
@@ -133,11 +134,11 @@ const AddStaffForm = () => {
                     id="lastName"
                     placeholder="Enter last name"
                     className="border-gray-200 focus:ring-2 focus:ring-emerald-500"
-                    {...register("lastName")}
+                    {...register("lName")}
                   />
-                  {errors.lastName && (
+                  {errors.lName && (
                     <p className="text-sm text-red-600">
-                      {errors.lastName.message}
+                      {errors.lName.message}
                     </p>
                   )}
                 </div>
@@ -221,10 +222,11 @@ const AddStaffForm = () => {
                       {...register("department")}
                     >
                       <option value="">Select department</option>
-                      <option value="general medicine">General Medicine</option>
+                      <option value="generalMedication">
+                        General Medicine
+                      </option>
                       <option value="emergency">Emergency</option>
-                      <option value="laboratory">Laboratory</option>
-                      <option value="physical therapy">Physical Therapy</option>
+                      <option value="lab">Laboratory</option>
                       <option value="cardiology">Cardiology</option>
                     </select>
                   </div>
@@ -263,9 +265,9 @@ const AddStaffForm = () => {
                     className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500"
                     {...register("availability")}
                   >
-                    <option value="Full-time">Full-time</option>
-                    <option value="Part-time">Part-time</option>
-                    <option value="Contract">Contract</option>
+                    <option value="full_time">Full-time</option>
+                    <option value="part_time">Part-time</option>
+                    <option value="contract">Contract</option>
                   </select>
                   {errors.availability && (
                     <p className="text-sm text-red-600">

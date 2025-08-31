@@ -16,7 +16,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerFormSchema } from "@/schemas/userFormSchema";
-import { useAuthStore } from "@/store/authStore"; // <-- import your store
+import { useAuthStore } from "@/store/authStore";
 
 type UserFormValues = z.infer<typeof registerFormSchema>;
 
@@ -25,7 +25,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const registerUser = useAuthStore((state) => state.register); // <-- hook into Zustand
+  const registerUser = useAuthStore((state) => state.register);
   const navigate = useNavigate();
 
   const {
@@ -39,8 +39,6 @@ const Register = () => {
   const onSubmit = async (data: UserFormValues) => {
     setIsLoading(true);
     try {
-      console.log("Validation Passed! Sending data:", data);
-
       await registerUser(data);
       navigate("/login");
     } catch (err) {
