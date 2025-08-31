@@ -5,7 +5,6 @@ import {
   Plus,
   Edit,
   Trash2,
-  Eye,
   Mail,
   Phone,
   Shield,
@@ -30,27 +29,38 @@ const ManageStaff = () => {
   const isLoading = useStaffStore((state) => state.isLoading);
   const error = useStaffStore((state) => state.error);
   const fetchStaff = useStaffStore((state) => state.fetchItems);
+  const deleteStaff = useStaffStore((state) => state.deleteItem);
 
   useEffect(() => {
     fetchStaff();
   }, [fetchStaff]);
 
+  const onclickDelete = async (id: number) => {
+    await deleteStaff(id);
+  };
+
+  // Filter safely
   const filteredStaff = staff.filter((member) => {
+    const fName = member.fName || "";
+    const lName = member.lName || "";
+    const role = member.role || "";
+    const email = member.email || "";
+    const department = member.department || "";
+
     const matchesSearch =
-      member.fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.lName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.department.toLowerCase().includes(searchTerm.toLowerCase());
+      fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      lName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      department.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       filterStatus === "all" || member.status === filterStatus;
-    const matchesRole = filterRole === "all" || member.role === filterRole;
+    const matchesRole = filterRole === "all" || role === filterRole;
 
     return matchesSearch && matchesStatus && matchesRole;
   });
 
-  // Helper functions
   const getStatusColor = (status: string) =>
     status === "active"
       ? "bg-green-100 text-green-800"
@@ -75,7 +85,7 @@ const ManageStaff = () => {
   const getInitials = (fName: string, lName: string) =>
     `${fName?.[0] || ""}${lName?.[0] || ""}`.toUpperCase();
 
-  const formatDate = (dateString: string) =>
+  const formatDate = (dateString?: string) =>
     dateString
       ? new Date(dateString).toLocaleDateString("en-US", {
           year: "numeric",
@@ -87,7 +97,6 @@ const ManageStaff = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-
       <div className="ml-64 p-8">
         {/* Header */}
         <header className="mb-8">
@@ -158,7 +167,7 @@ const ManageStaff = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Departments</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {[...new Set(staff.map((s) => s.department))].length}
+                  {[...new Set(staff.map((s) => s.department || ""))].length}
                 </p>
               </div>
             </div>
@@ -166,49 +175,47 @@ const ManageStaff = () => {
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search staff by name, role, or department..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border-gray-200 focus:ring-2 focus:ring-emerald-500"
-              />
-            </div>
-
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-
-            <select
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
-              className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="all">All Roles</option>
-              {[...new Set(staff.map((m) => m.role))].map((role) => (
-                <option key={role} value={role}>
-                  {role}
-                </option>
-              ))}
-            </select>
-
-            <Link to="/addStaff">
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center space-x-2">
-                <Plus className="h-4 w-4" />
-                <span>Add Staff</span>
-              </Button>
-            </Link>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6 flex flex-col lg:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="Search staff by name, role, or department..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-4 py-2 w-full border-gray-200 focus:ring-2 focus:ring-emerald-500"
+            />
           </div>
+
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+
+          <select
+            value={filterRole}
+            onChange={(e) => setFilterRole(e.target.value)}
+            className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="all">All Roles</option>
+            {[...new Set(staff.map((m) => m.role || ""))].map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+          </select>
+
+          <Link to="/addStaff">
+            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white flex items-center space-x-2">
+              <Plus className="h-4 w-4" />
+              <span>Add Staff</span>
+            </Button>
+          </Link>
         </div>
 
         {/* Table */}
@@ -273,18 +280,22 @@ const ManageStaff = () => {
                       <div className="flex items-center">
                         <Avatar className="h-10 w-10">
                           <AvatarImage
-                            alt={`${member.fName} ${member.lName}`}
+                            alt={`${member.fName || ""} ${member.lName || ""}`}
                           />
                           <AvatarFallback className="bg-emerald-100 text-emerald-600">
-                            {getInitials(member.fName, member.lName)}
+                            {getInitials(
+                              member.fName || "",
+                              member.lName || ""
+                            )}
                           </AvatarFallback>
                         </Avatar>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {member.fName} {member.lName}
+                            {member.fName || ""} {member.lName || ""}
                           </div>
                           <div className="text-sm text-gray-500">
-                            Staff ID: STF{member.id.toString().padStart(4, "0")}
+                            Staff ID: STF
+                            {member.id?.toString().padStart(4, "0")}
                           </div>
                         </div>
                       </div>
@@ -293,25 +304,25 @@ const ManageStaff = () => {
                       <div className="space-y-1">
                         <Badge
                           variant="secondary"
-                          className={getRoleColor(member.role)}
+                          className={getRoleColor(member.role || "")}
                         >
-                          {member.role}
+                          {member.role || "N/A"}
                         </Badge>
                         <div className="flex items-center text-sm text-gray-600 mt-1">
-                          <Building className="h-4 w-4 mr-1 text-gray-400" />
-                          {member.department}
+                          <Building className="h-4 w-4 mr-1 text-gray-400" />{" "}
+                          {member.department || "N/A"}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="space-y-1">
                         <div className="flex items-center text-sm text-gray-600">
-                          <Mail className="h-4 w-4 mr-1 text-gray-400" />
-                          {member.email}
+                          <Mail className="h-4 w-4 mr-1 text-gray-400" />{" "}
+                          {member.email || "N/A"}
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
-                          <Phone className="h-4 w-4 mr-1 text-gray-400" />
-                          {member.phoneNumber}
+                          <Phone className="h-4 w-4 mr-1 text-gray-400" />{" "}
+                          {member.phoneNumber || "N/A"}
                         </div>
                       </div>
                     </td>
@@ -321,28 +332,23 @@ const ManageStaff = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Badge
                         variant="secondary"
-                        className={getAvailabilityColor(member.availability)}
+                        className={getAvailabilityColor(
+                          member.availability || ""
+                        )}
                       >
-                        {member.availability}
+                        {member.availability || "N/A"}
                       </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Badge
                         variant="secondary"
-                        className={getStatusColor(member.status)}
+                        className={getStatusColor(member.status || "")}
                       >
-                        {member.status}
+                        {member.status || "N/A"}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-gray-400 hover:text-emerald-600 hover:bg-emerald-50"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 flex space-x-2">
+                      <Link to={`/editStaffForm/${member.id}`}>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -350,14 +356,15 @@ const ManageStaff = () => {
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-gray-400 hover:text-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => onclickDelete(member.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </td>
                   </tr>
                 ))}
