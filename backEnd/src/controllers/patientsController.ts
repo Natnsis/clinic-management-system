@@ -34,10 +34,24 @@ export async function getPatientsById(req: Request, res: Response) {
 export async function deletePatient(req: Request, res: Response) {
   try {
     const { userId } = req.params;
+
+    // Delete related records first
+    await prisma.appointments.deleteMany({ where: { patientId: userId } });
+    await prisma.records.deleteMany({ where: { patientId: userId } });
+    await prisma.prescriptions.deleteMany({ where: { patientId: userId } });
+    await prisma.feedbacks.deleteMany({ where: { patientId: userId } });
+    await prisma.message.deleteMany({
+      where: { OR: [{ patientId: userId }, { staffId: userId }] },
+    });
+
     await prisma.patients.delete({ where: { id: userId } });
-    return res.status(200).json({ message: "User deleted successfully" });
-  } catch (err) {
-    return res.status(404).json({ message: "User not found or cannot delete" });
+
+    return res.status(200).json({ message: "Patient deleted successfully" });
+  } catch (err: any) {
+    console.error("Delete patient error:", err);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while deleting the patient" });
   }
 }
 
