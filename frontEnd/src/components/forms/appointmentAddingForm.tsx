@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ArrowLeft,
   Search,
@@ -14,9 +14,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import StaffSidebar from "@/components/staff/StaffSidebar";
 import { Link } from "react-router-dom";
+import { usePatientStore } from "@/store/overallStore";
+
+type Patient = {
+  id: string;
+  fName: string;
+  lName: string;
+  studentId: string;
+  password: string;
+  email: string;
+  lastVisit: string;
+  createdAt: string;
+};
 
 const AppointmentAddingForm = () => {
-  const [step, setStep] = useState(1); 
+  const [step, setStep] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
@@ -26,64 +38,14 @@ const AppointmentAddingForm = () => {
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const fetchPatients = usePatientStore((state) => state.fetchItems);
+  const patients = usePatientStore((state) => state.items) as Patient[];
+  const isLoading = usePatientStore((state) => state.isLoading);
+  const error = usePatientStore((state) => state.error);
 
-  // Mock patient data
-  const patients = [
-    {
-      id: 1,
-      firstName: "John",
-      lastName: "Doe",
-      studentId: "STU12345",
-      department: "Computer Science",
-      year: "3rd Year",
-      avatar: "JD",
-    },
-    {
-      id: 2,
-      firstName: "Jane",
-      lastName: "Smith",
-      studentId: "STU67890",
-      department: "Engineering",
-      year: "2nd Year",
-      avatar: "JS",
-    },
-    {
-      id: 3,
-      firstName: "Robert",
-      lastName: "Johnson",
-      studentId: "STU11223",
-      department: "Business",
-      year: "4th Year",
-      avatar: "RJ",
-    },
-    {
-      id: 4,
-      firstName: "Lisa",
-      lastName: "Anderson",
-      studentId: "STU44556",
-      department: "Arts",
-      year: "1st Year",
-      avatar: "LA",
-    },
-    {
-      id: 5,
-      firstName: "Michael",
-      lastName: "Chen",
-      studentId: "STU77889",
-      department: "Science",
-      year: "3rd Year",
-      avatar: "MC",
-    },
-    {
-      id: 6,
-      firstName: "Emily",
-      lastName: "Rodriguez",
-      studentId: "STU99001",
-      department: "Medicine",
-      year: "4th Year",
-      avatar: "ER",
-    },
-  ];
+  useEffect(() => {
+    fetchPatients();
+  }, [fetchPatients]);
 
   const appointmentTypes = [
     "General Checkup",
@@ -114,10 +76,9 @@ const AppointmentAddingForm = () => {
 
   const filteredPatients = patients.filter(
     (patient) =>
-      patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.department.toLowerCase().includes(searchTerm.toLowerCase())
+      patient.fName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.lName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.studentId.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleNext = () => {
@@ -237,7 +198,7 @@ const AppointmentAddingForm = () => {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-amber-400" />
                     <Input
                       type="text"
-                      placeholder="Search patients by name, ID, or department..."
+                      placeholder="Search patients by name or ID "
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10 pr-4 py-2 w-full border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500"
@@ -262,19 +223,17 @@ const AppointmentAddingForm = () => {
                         >
                           <div className="flex items-center space-x-3">
                             <Avatar className="h-12 w-12 ring-2 ring-amber-200">
-                              <AvatarFallback className="bg-amber-100 text-amber-600">
-                                {patient.avatar}
+                              <AvatarFallback className="bg-emerald-100 text-emerald-600">
+                                {patient.fName[0]}
+                                {patient.lName[0]}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
                               <h3 className="font-semibold text-amber-900">
-                                {patient.firstName} {patient.lastName}
+                                {patient.fName} {patient.lName}
                               </h3>
                               <p className="text-sm text-amber-700">
                                 ID: {patient.studentId}
-                              </p>
-                              <p className="text-xs text-amber-600">
-                                {patient.department} • {patient.year}
                               </p>
                             </div>
                             {selectedPatient?.id === patient.id && (

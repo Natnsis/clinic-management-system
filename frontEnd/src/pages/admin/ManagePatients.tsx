@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Users, Search, Eye, Trash2, Mail, Phone } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Users, Search, Eye, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Sidebar from "@/components/admin/Sidebar";
 import { usePatientStore } from "@/store/overallStore";
 
-export type Patient = {
+type Patient = {
   id: string;
   fName: string;
   lName: string;

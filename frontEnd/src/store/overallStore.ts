@@ -10,6 +10,7 @@ type EntityStore<T> = {
   addItem: (item: Omit<T, "id">) => Promise<void>;
   updateItem: (id: string, item: Partial<T>) => Promise<void>;
   deleteItem: (id: string) => Promise<void>;
+  fetchItemsById: (id: string) => Promise<void>;
 };
 
 // API instance
@@ -29,6 +30,19 @@ function createEntityStore<T>(endpoint: string) {
       try {
         const res = await api.get(`/${endpoint}`);
         set({ items: res.data, isLoading: false });
+      } catch (err: any) {
+        set({
+          error: err.message || `Failed to fetch ${endpoint}`,
+          isLoading: false,
+        });
+      }
+    },
+
+    fetchItemsById: async (id: string) => {
+      set({ isLoading: true, error: null });
+      try {
+        const res = await api.get(`/${endpoint}/${id}`);
+        set({ items: [res.data], isLoading: false });
       } catch (err: any) {
         set({
           error: err.message || `Failed to fetch ${endpoint}`,

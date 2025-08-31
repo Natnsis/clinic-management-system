@@ -39,12 +39,6 @@ enum Availability {
   part_time
 }
 
-enum AppointmentStatus {
-  confirmed
-  pending
-  canceled 
-}
-
 enum FeedbackStatus {
   reviewed
   pending
@@ -131,10 +125,11 @@ model Appointments {
   id        String          @id @default(uuid())
   patientId String
   staffId   String
-  reason    String
-  status    AppointmentStatus
-  note      String? //notes might be added later
-  location  String
+  reason    String?
+  type      String
+  date      String
+  time      String
+  note      String? 
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 

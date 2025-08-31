@@ -14,15 +14,16 @@ export async function getAllAppointments(req: Request, res: Response) {
 
 export async function addAppointments(req: Request, res: Response) {
   try {
-    const { patientId, staffId, reason, status, note, location } = req.body;
+    const { patientId, staffId, reason, note, type, date, time } = req.body;
     await prisma.appointments.create({
       data: {
         patientId,
         staffId,
+        date,
+        time,
         reason,
-        status,
         note,
-        location,
+        type,
       },
     });
 
@@ -47,17 +48,18 @@ export async function deleteAppointments(req: Request, res: Response) {
 export async function updateAppointment(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    const { patientId, staffId, reason, status, note, location } = req.body;
+    const { patientId, staffId, reason, note, type, date, time } = req.body;
 
     const updated = await prisma.appointments.update({
       where: { id },
       data: {
         patientId,
         staffId,
+        date,
+        time,
         reason,
-        status,
         note,
-        location,
+        type,
       },
     });
 

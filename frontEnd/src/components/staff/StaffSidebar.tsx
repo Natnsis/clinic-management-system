@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar,
   Users,
@@ -10,7 +10,8 @@ import {
   LogOut,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/authStore"; // if you have the auth store
+import { useAuthStore } from "@/store/authStore";
+import { useStaffStore, type Staff } from "@/store/overallStore";
 
 const StaffSidebar = () => {
   const [activeItem, setActiveItem] = useState("dashboard");
@@ -18,7 +19,23 @@ const StaffSidebar = () => {
     setActiveItem(item);
   };
 
-  const logout = useAuthStore((state) => state.logout); // if using Zustand
+  // Zustand stores
+  const logout = useAuthStore((state) => state.logout);
+  const userData = useAuthStore((state) => state.user);
+  const id = userData?.userId;
+
+  const getUserData = useStaffStore((state) => state.fetchItemsById);
+  const staffs = useStaffStore((state) => state.items as Staff[]);
+  console.log(staffs);
+  useEffect(() => {
+    if (id) {
+      getUserData(id);
+    }
+  }, [id, getUserData]);
+
+  // current logged in staff
+  const currentStaff = staffs.find((s) => s.id === id);
+
   const navigate = useNavigate();
   const handleLogout = () => {
     logout();
@@ -29,7 +46,7 @@ const StaffSidebar = () => {
     {
       icon: LayoutDashboard,
       label: "Dashboard",
-      key: "appointments",
+      key: "dashboard",
       link: "/staffDashboard",
     },
     {
@@ -136,9 +153,9 @@ const StaffSidebar = () => {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-amber-900">
-              Dr. Sarah Johnson
+              {currentStaff?.fName} {currentStaff?.lName}
             </p>
-            <p className="text-xs text-amber-700">Physician</p>
+            <p className="text-xs text-amber-700">{currentStaff?.role}</p>
           </div>
         </div>
       </div>
