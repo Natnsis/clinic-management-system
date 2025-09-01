@@ -44,7 +44,6 @@ const AppointmentAddingForm = () => {
   const addAppointment = useAppointmentStore((state) => state.addItem);
   const userData = useAuthStore((state) => state.user);
   const staffId = userData!.userId;
-  console.log(staffId);
   useEffect(() => {
     fetchPatients();
   }, [fetchPatients]);
@@ -101,7 +100,6 @@ const AppointmentAddingForm = () => {
         date: selectedDate,
         time: selectedTime,
       };
-      console.log(newAppointment);
 
       await addAppointment(newAppointment);
 
