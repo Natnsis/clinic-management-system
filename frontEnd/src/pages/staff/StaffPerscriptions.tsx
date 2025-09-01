@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FileText, Search, Plus, Edit, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,11 +6,19 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import StaffSidebar from "@/components/staff/StaffSidebar";
+import { Link } from "react-router-dom";
+import { usePrescriptionStore, type Prescription } from "@/store/overallStore";
 
 const Prescriptions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("active");
   const [filterType, setFilterType] = useState("all");
+
+  const getPrescriptions = usePrescriptionStore((state) => state.fetchItems);
+  const prescriptions = usePrescriptionStore((state)=>state.items) as Prescription[];
+  useEffect(() => {
+    getPrescriptions();
+  }, [getPrescriptions]);
 
   // Mock prescription data
   const prescriptions = [
@@ -262,11 +270,12 @@ const Prescriptions = () => {
                   </option>
                 ))}
             </select>
-
-            <Button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2">
-              <Plus className="h-4 w-4" />
-              <span>Issue Prescription</span>
-            </Button>
+            <Link to="/addPrescriptionForm">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Issue Prescription</span>
+              </Button>
+            </Link>
           </div>
         </div>
 

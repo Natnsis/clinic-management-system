@@ -123,6 +123,17 @@ export type Patient = {
   updatedAt: string;
 };
 
+export type Prescription = {
+  id: string;
+  patientId: string;
+  staffId: string;
+  medication: string;
+  detail: string;
+  duration: string;
+  refills: string;
+  frequency: string;
+};
+
 export type Appointment = {
   id: string;
   patientId: string;
@@ -147,3 +158,5 @@ export const usePatientStore = createEntityStore<Patient>("patients");
 export const useAppointmentStore =
   createEntityStore<Appointment>("appointments");
 export const useFeedbackStore = createEntityStore<Feedback>("feedbacks");
+export const usePrescriptionStore =
+  createEntityStore<Prescription>("prescriptions");

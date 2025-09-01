@@ -31,6 +31,7 @@ import StaffPerscriptions from "./pages/staff/StaffPerscriptions.tsx";
 import AddStaffForm from "./components/forms/addStaffForm.tsx";
 import EditStaffForm from "./components/forms/editStaffForm.tsx";
 import AppointmentAddingForm from "./components/forms/appointmentAddingForm.tsx";
+import AddPrescriptionForm from "./components/forms/addPerscriptionForm.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
   { path: "/staffProfile", element: <StaffProfile /> },
   { path: "/addStaff", element: <AddStaffForm /> },
   { path: "/appointmentAddingForm", element: <AppointmentAddingForm /> },
+  { path: "/addPrescriptionForm", element: <AddPrescriptionForm /> },
   { path: "/editStaffForm/:id", element: <EditStaffForm /> },
   { path: "*", element: <NotFound /> },
 ]);
