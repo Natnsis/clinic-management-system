@@ -50,7 +50,7 @@ const StaffSidebar = () => {
     },
     {
       icon: Calendar,
-      label: "Appointment Schedules",
+      label: "Appointments",
       key: "appointments",
       link: "/appointmentSchedule",
     },
@@ -84,7 +84,6 @@ const StaffSidebar = () => {
       key: "messages",
       link: "/staffMessages",
     },
-    { icon: User, label: "Profile", key: "profile", link: "/staffProfile" },
   ];
 
   return (
@@ -118,7 +117,7 @@ const StaffSidebar = () => {
                 }`}
               >
                 <Link to={item.link}>
-                  <div className="flex items-center space-x-3">
+                  <button className="flex items-center space-x-3">
                     <item.icon
                       className={`h-5 w-5 ${
                         activeItem === item.key
@@ -127,7 +126,7 @@ const StaffSidebar = () => {
                       }`}
                     />
                     <span>{item.label}</span>
-                  </div>
+                  </button>
                 </Link>
               </button>
             </div>
@@ -147,9 +146,12 @@ const StaffSidebar = () => {
       {/* User Profile */}
       <div className="p-4 border-t border-amber-200 bg-amber-50">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full flex items-center justify-center">
+          <Link
+            to="/staffProfile"
+            className="h-10 w-10 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full flex items-center justify-center"
+          >
             <User className="h-5 w-5 text-white" />
-          </div>
+          </Link>
           <div className="flex-1">
             <p className="text-sm font-medium text-amber-900">
               {currentStaff?.fName} {currentStaff?.lName}

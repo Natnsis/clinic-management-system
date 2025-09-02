@@ -9,148 +9,73 @@ import StaffSidebar from "@/components/staff/StaffSidebar";
 import { Link } from "react-router-dom";
 import { usePrescriptionStore, type Prescription } from "@/store/overallStore";
 
+const medicationTypes = [
+  "all",
+  "antibiotics",
+  "pain relief",
+  "allergy",
+  "vitamins",
+  "chronic",
+];
+
 const Prescriptions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("active");
   const [filterType, setFilterType] = useState("all");
 
   const getPrescriptions = usePrescriptionStore((state) => state.fetchItems);
-  const prescriptions = usePrescriptionStore((state)=>state.items) as Prescription[];
+  const prescriptions = usePrescriptionStore(
+    (state) => state.items
+  ) as Prescription[];
+  console.log(prescriptions);
   useEffect(() => {
     getPrescriptions();
   }, [getPrescriptions]);
 
-  // Mock prescription data
-  const prescriptions = [
-    {
-      id: 1,
-      patient: "John Doe",
-      patientId: "STU12345",
-      medication: "Loratadine",
-      dosage: "10mg",
-      frequency: "Once daily",
-      startDate: "November 1, 2023",
-      endDate: "Ongoing",
-      doctor: "Dr. Sarah Johnson",
-      reason: "Seasonal allergies",
-      status: "active",
-      refills: 2,
-      pharmacy: "Campus Pharmacy",
-      instructions:
-        "Take one tablet daily with water. May be taken with or without food.",
-      avatar: "JD",
-    },
-    {
-      id: 2,
-      patient: "Jane Smith",
-      patientId: "STU67890",
-      medication: "Paracetamol",
-      dosage: "500mg",
-      frequency: "As needed",
-      startDate: "May 10, 2023",
-      endDate: "June 10, 2023",
-      doctor: "Dr. James Taylor",
-      reason: "Fever and pain relief",
-      status: "completed",
-      refills: 0,
-      pharmacy: "University Health Center",
-      instructions:
-        "Take one tablet every 6 hours as needed for fever or pain. Do not exceed 4 tablets in 24 hours.",
-      avatar: "JS",
-    },
-    {
-      id: 3,
-      patient: "Robert Johnson",
-      patientId: "STU11223",
-      medication: "Multivitamin",
-      dosage: "1 tablet",
-      frequency: "Once daily",
-      startDate: "January 15, 2023",
-      endDate: "Ongoing",
-      doctor: "Dr. Sarah Johnson",
-      reason: "General health supplement",
-      status: "active",
-      refills: 4,
-      pharmacy: "Campus Pharmacy",
-      instructions: "Take one tablet daily with breakfast.",
-      avatar: "RJ",
-    },
-    {
-      id: 4,
-      patient: "Lisa Anderson",
-      patientId: "STU44556",
-      medication: "Ibuprofen",
-      dosage: "200mg",
-      frequency: "As needed",
-      startDate: "April 5, 2023",
-      endDate: "May 5, 2023",
-      doctor: "Dr. Michael Chen",
-      reason: "Muscle pain",
-      status: "completed",
-      refills: 0,
-      pharmacy: "City Pharmacy",
-      instructions:
-        "Take one tablet every 6-8 hours as needed for pain. Take with food.",
-      avatar: "LA",
-    },
-  ];
-
-  const medicationTypes = [
-    "all",
-    "antibiotics",
-    "pain relief",
-    "allergy",
-    "vitamins",
-    "chronic",
-  ];
-
+  // Filtered prescriptions
   const filteredPrescriptions = prescriptions.filter((prescription) => {
+    const patient = prescription.patient ?? "";
+    const medication = prescription.medication ?? "";
+    const reason = prescription.reason ?? "";
+    const patientId = prescription.patientId ?? "";
+
     const matchesSearch =
-      prescription.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prescription.medication
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      prescription.patientId.toLowerCase().includes(searchTerm.toLowerCase());
+      patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      medication.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patientId.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       filterStatus === "all" || prescription.status === filterStatus;
+
     const matchesType =
       filterType === "all" ||
-      (prescription.reason.toLowerCase().includes("allergy") &&
-        filterType === "allergy") ||
-      ((prescription.reason.toLowerCase().includes("fever") ||
-        prescription.reason.toLowerCase().includes("pain")) &&
+      (reason.toLowerCase().includes("allergy") && filterType === "allergy") ||
+      ((reason.toLowerCase().includes("fever") ||
+        reason.toLowerCase().includes("pain")) &&
         filterType === "pain relief") ||
-      (prescription.reason.toLowerCase().includes("supplement") &&
+      (reason.toLowerCase().includes("supplement") &&
         filterType === "vitamins");
 
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     return status === "active"
       ? "bg-green-100 text-green-800"
       : "bg-gray-100 text-gray-800";
   };
 
-  const getTypeColor = (prescription) => {
-    if (prescription.reason.toLowerCase().includes("allergy")) {
-      return "bg-orange-100 text-orange-800";
-    } else if (
-      prescription.reason.toLowerCase().includes("fever") ||
-      prescription.reason.toLowerCase().includes("pain")
-    ) {
+  const getTypeColor = (prescription: Prescription) => {
+    const reason = (prescription.reason ?? "").toLowerCase();
+    const medication = (prescription.medication ?? "").toLowerCase();
+
+    if (reason.includes("allergy")) return "bg-orange-100 text-orange-800";
+    if (reason.includes("fever") || reason.includes("pain"))
       return "bg-red-100 text-red-800";
-    } else if (
-      prescription.reason.toLowerCase().includes("supplement") ||
-      prescription.medication.toLowerCase().includes("vitamin")
-    ) {
+    if (reason.includes("supplement") || medication.includes("vitamin"))
       return "bg-green-100 text-green-800";
-    } else if (prescription.reason.toLowerCase().includes("chronic")) {
-      return "bg-purple-100 text-purple-800";
-    } else {
-      return "bg-blue-100 text-blue-800";
-    }
+    if (reason.includes("chronic")) return "bg-purple-100 text-purple-800";
+    return "bg-blue-100 text-blue-800";
   };
 
   const stats = {
@@ -165,8 +90,8 @@ const Prescriptions = () => {
   return (
     <div className="min-h-screen bg-amber-50">
       <StaffSidebar />
-
       <div className="ml-64 p-8">
+        {/* Header */}
         <header className="mb-8">
           <div className="flex items-center space-x-3 mb-2">
             <FileText className="h-8 w-8 text-amber-600" />
@@ -179,57 +104,36 @@ const Prescriptions = () => {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-l-4 border-amber-500">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-amber-600">
-                Total Prescriptions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">
-                {stats.totalPrescriptions}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-green-500">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-amber-600">
-                Active
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">
-                {stats.active}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-blue-500">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-amber-600">
-                Completed
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">
-                {stats.completed}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-orange-500">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-amber-600">
-                Refills Available
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">
-                {stats.refillsAvailable}
-              </div>
-            </CardContent>
-          </Card>
+          {[
+            {
+              label: "Total Prescriptions",
+              value: stats.totalPrescriptions,
+              color: "amber-500",
+            },
+            { label: "Active", value: stats.active, color: "green-500" },
+            { label: "Completed", value: stats.completed, color: "blue-500" },
+            {
+              label: "Refills Available",
+              value: stats.refillsAvailable,
+              color: "orange-500",
+            },
+          ].map((stat) => (
+            <Card
+              key={stat.label}
+              className={`border-l-4 border-${stat.color}`}
+            >
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-amber-600">
+                  {stat.label}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-gray-900">
+                  {stat.value}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Controls */}
@@ -270,6 +174,7 @@ const Prescriptions = () => {
                   </option>
                 ))}
             </select>
+
             <Link to="/addPrescriptionForm">
               <Button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2">
                 <Plus className="h-4 w-4" />
@@ -279,33 +184,28 @@ const Prescriptions = () => {
           </div>
         </div>
 
-        {/* Prescriptions List */}
+        {/* Prescriptions Table */}
         <div className="bg-white rounded-2xl shadow-sm border border-amber-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-amber-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
-                    Patient
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
-                    Medication
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
-                    Details
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
-                    Duration
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
-                    Refills
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  {[
+                    "Patient",
+                    "Medication",
+                    "Details",
+                    "Duration",
+                    "Refills",
+                    "Status",
+                    "Actions",
+                  ].map((header) => (
+                    <th
+                      key={header}
+                      className="px-6 py-3 text-left text-xs font-medium text-amber-900 uppercase tracking-wider"
+                    >
+                      {header}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-amber-100">
@@ -319,7 +219,8 @@ const Prescriptions = () => {
                         <Avatar className="h-10 w-10">
                           <AvatarImage alt={prescription.patient} />
                           <AvatarFallback className="bg-amber-100 text-amber-600">
-                            {prescription.avatar}
+                            {prescription.patient[0] +
+                              prescription.patient.split(" ")[1][0]}
                           </AvatarFallback>
                         </Avatar>
                         <div className="ml-4">
@@ -333,23 +234,19 @@ const Prescriptions = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-amber-900">
-                          {prescription.medication}
-                        </div>
-                        <Badge
-                          variant="secondary"
-                          className={getTypeColor(prescription)}
-                        >
-                          {prescription.reason}
-                        </Badge>
+                      <div className="text-sm font-medium text-amber-900">
+                        {prescription.medication}
                       </div>
+                      <Badge
+                        variant="secondary"
+                        className={getTypeColor(prescription)}
+                      >
+                        {prescription.reason}
+                      </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-amber-800">
-                        <div>
-                          {prescription.dosage} • {prescription.frequency}
-                        </div>
+                        {prescription.dosage} • {prescription.frequency}
                         <div className="text-xs text-amber-600 mt-1">
                           Issued by: {prescription.doctor}
                         </div>
@@ -357,10 +254,7 @@ const Prescriptions = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-amber-800">
-                        <div>{prescription.startDate}</div>
-                        <div className="text-xs text-amber-600 mt-1">
-                          to {prescription.endDate}
-                        </div>
+                        {prescription.startDate} to {prescription.endDate}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -407,6 +301,7 @@ const Prescriptions = () => {
             </table>
           </div>
 
+          {/* Pagination placeholder */}
           <div className="px-6 py-4 bg-amber-50 flex items-center justify-between">
             <p className="text-sm text-amber-800">
               Showing <span className="font-medium">1</span> to{" "}
@@ -424,7 +319,7 @@ const Prescriptions = () => {
                 variant="outline"
                 size="sm"
                 className="text-sm text-amber-700 border-amber-200"
-                disabled={true}
+                disabled
               >
                 Previous
               </Button>
@@ -452,10 +347,12 @@ const Prescriptions = () => {
             <p className="text-amber-700">
               Try adjusting your search or filter criteria.
             </p>
-            <Button className="mt-4 bg-amber-600 hover:bg-amber-700 text-white">
-              <Plus className="h-4 w-4 mr-2" />
-              Issue New Prescription
-            </Button>
+            <Link to="/addPrescriptionForm">
+              <Button className="mt-4 bg-amber-600 hover:bg-amber-700 text-white">
+                <Plus className="h-4 w-4 mr-2" />
+                Issue New Prescription
+              </Button>
+            </Link>
           </div>
         )}
       </div>

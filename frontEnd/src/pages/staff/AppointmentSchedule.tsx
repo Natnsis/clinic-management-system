@@ -182,10 +182,12 @@ const AppointmentSchedule = () => {
               </p>
               <Link
                 to="/appointmentAddingForm"
-                className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2 my-20 text-center"
+                className="w-full flex justify-center"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Schedule Your First Appointment
+                <button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2 my-20 text-center rounded-lg px-5 py-3">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Schedule Your First Appointment
+                </button>
               </Link>
             </Card>
           ) : (

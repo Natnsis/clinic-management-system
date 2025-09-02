@@ -78,3 +78,14 @@ export async function getPrescriptionForPatient(req: Request, res: Response) {
     return res.status(500).json({ message: "unable to fetch prescriptions" });
   }
 }
+
+export async function getPrescription(req: Request, res: Response) {
+  try {
+    const prescriptions = await prisma.prescriptions.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    return res.status(200).json(prescriptions);
+  } catch (e) {
+    return res.status(500).json({ message: "unable to fetch prescriptions" });
+  }
+}
