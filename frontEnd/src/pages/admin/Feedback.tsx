@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MessageCircle,
   Star,
@@ -10,136 +10,71 @@ import {
   User,
 } from "lucide-react";
 import Sidebar from "@/components/admin/Sidebar";
+import {
+  useAppointmentStore,
+  useFeedbackStore,
+  type Appointment,
+  type Feedback,
+} from "@/store/overallStore";
 
 const Feedback = () => {
-  const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const getFeedbacks = useFeedbackStore((state) => state.fetchItems);
+  const feedbacks = useFeedbackStore((state) => state.items) as Feedback[];
+
+  const getAppointments = useAppointmentStore((state) => state.fetchItems);
+  const appointments = useAppointmentStore(
+    (state) => state.items
+  ) as Appointment[];
+
+  useEffect(() => {
+    getFeedbacks();
+    getAppointments();
+  }, [getFeedbacks, getAppointments]);
+
+  const [responses, setResponses] = useState<Record<string, string>>({});
+  const [showResponseForm, setShowResponseForm] = useState<
+    Record<string, boolean>
+  >({});
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortBy, setSortBy] = useState("date");
 
-  // Mock feedback data
-  const feedbacks = [
-    {
-      id: 1,
-      patient: "John Doe",
-      patientId: "STU12345",
-      rating: 5,
-      comment:
-        "Excellent service and very professional staff. The doctor took time to explain everything clearly.",
-      date: "2023-06-15",
-      status: "reviewed",
-      department: "General Medicine",
-      response:
-        "Thank you for your feedback, John. We are glad to hear about your positive experience.",
-    },
-    {
-      id: 2,
-      patient: "Jane Smith",
-      patientId: "STU67890",
-      rating: 4,
-      comment:
-        "Good experience, waiting time could be shorter. Staff was friendly and helpful.",
-      date: "2023-06-14",
-      status: "pending",
-      department: "Dental Clinic",
-      response: "",
-    },
-    {
-      id: 3,
-      patient: "Robert Johnson",
-      patientId: "STU11223",
-      rating: 5,
-      comment:
-        "Dr. Smith is amazing! Highly recommend. The clinic is well-organized and clean.",
-      date: "2023-06-13",
-      status: "reviewed",
-      department: "Cardiology",
-      response:
-        "We appreciate your kind words, Robert. Dr. Smith will be happy to hear this!",
-    },
-    {
-      id: 4,
-      patient: "Lisa Anderson",
-      patientId: "STU44556",
-      rating: 3,
-      comment:
-        "Average experience. The doctor was knowledgeable but seemed rushed during the appointment.",
-      date: "2023-06-12",
-      status: "pending",
-      department: "General Medicine",
-      response: "",
-    },
-    {
-      id: 5,
-      patient: "Michael Chen",
-      patientId: "STU77889",
-      rating: 5,
-      comment:
-        "Outstanding care! The follow-up process was excellent and very thorough.",
-      date: "2023-06-11",
-      status: "reviewed",
-      department: "Physical Therapy",
-      response:
-        "Thank you for recognizing our follow-up process, Michael. We strive for excellence in patient care.",
-    },
-    {
-      id: 6,
-      patient: "Sarah Wilson",
-      patientId: "STU99001",
-      rating: 2,
-      comment:
-        "Long waiting time and staff seemed overwhelmed. Needs improvement in patient flow management.",
-      date: "2023-06-10",
-      status: "pending",
-      department: "Emergency",
-      response: "",
-    },
-  ];
-
-  const [responses, setResponses] = useState({});
-  const [showResponseForm, setShowResponseForm] = useState({});
-
-  const filteredFeedbacks = feedbacks
-    .filter((feedback) => {
+  // Filter + sort
+  const filteredFeedbacks = (feedbacks || [])
+    .filter((f) => {
       const matchesSearch =
-        feedback.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        feedback.comment.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus =
-        filterStatus === "all" || feedback.status === filterStatus;
+        f.patient?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        f.content?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = filterStatus === "all" || f.status === filterStatus;
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
-      if (sortBy === "date") return new Date(b.date) - new Date(a.date);
-      if (sortBy === "rating") return b.rating - a.rating;
-      if (sortBy === "patient") return a.patient.localeCompare(b.patient);
+      if (sortBy === "date")
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      if (sortBy === "rating") return (b.rate ?? 0) - (a.rate ?? 0);
+      if (sortBy === "patient") return a.patient.localeCompare(b.patient, "en");
       return 0;
     });
 
-  const handleResponseChange = (feedbackId, value) => {
-    setResponses((prev) => ({
-      ...prev,
-      [feedbackId]: value,
-    }));
+  const handleResponseChange = (feedbackId: string, value: string) => {
+    setResponses((prev) => ({ ...prev, [feedbackId]: value }));
   };
 
-  const handleSendResponse = (feedbackId) => {
-    // In a real app, this would send to backend
+  const handleSendResponse = (feedbackId: string) => {
+    // TODO: send response + status update to backend
     alert(`Response sent for feedback #${feedbackId}`);
-    setShowResponseForm((prev) => ({
-      ...prev,
-      [feedbackId]: false,
-    }));
-    // Update status to reviewed
-    // This would be handled by backend in real implementation
+    setShowResponseForm((prev) => ({ ...prev, [feedbackId]: false }));
   };
 
-  const getRatingColor = (rating) => {
+  const getRatingColor = (rating: number) => {
     if (rating >= 4) return "text-green-500";
     if (rating === 3) return "text-yellow-500";
     return "text-red-500";
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     if (status === "reviewed") return "bg-green-100 text-green-800";
     return "bg-yellow-100 text-yellow-800";
   };
@@ -163,72 +98,37 @@ const Feedback = () => {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center">
-              <div className="h-10 w-10 bg-emerald-100 rounded-xl flex items-center justify-center mr-4">
-                <MessageCircle className="h-6 w-6 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Total Feedbacks
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {feedbacks.length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center">
-              <div className="h-10 w-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
-                <ThumbsUp className="h-6 w-6 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  5-Star Ratings
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {feedbacks.filter((f) => f.rating === 5).length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center">
-              <div className="h-10 w-10 bg-yellow-100 rounded-xl flex items-center justify-center mr-4">
-                <Star className="h-6 w-6 text-yellow-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Average Rating
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {(
-                    feedbacks.reduce((acc, f) => acc + f.rating, 0) /
+          <StatCard
+            icon={<MessageCircle className="h-6 w-6 text-emerald-600" />}
+            label="Total Feedbacks"
+            value={feedbacks?.length ?? 0}
+            bg="emerald"
+          />
+          <StatCard
+            icon={<ThumbsUp className="h-6 w-6 text-green-600" />}
+            label="5-Star Ratings"
+            value={feedbacks?.filter((f) => f.rate === 5).length ?? 0}
+            bg="green"
+          />
+          <StatCard
+            icon={<Star className="h-6 w-6 text-yellow-600" />}
+            label="Average Rating"
+            value={
+              feedbacks?.length
+                ? (
+                    feedbacks.reduce((acc, f) => acc + (f.rate ?? 0), 0) /
                     feedbacks.length
-                  ).toFixed(1)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center">
-              <div className="h-10 w-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
-                <Eye className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">
-                  Pending Review
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {feedbacks.filter((f) => f.status === "pending").length}
-                </p>
-              </div>
-            </div>
-          </div>
+                  ).toFixed(1)
+                : "0.0"
+            }
+            bg="yellow"
+          />
+          <StatCard
+            icon={<Eye className="h-6 w-6 text-blue-600" />}
+            label="Pending Review"
+            value={feedbacks?.filter((f) => f.status === "pending").length ?? 0}
+            bg="blue"
+          />
         </div>
 
         {/* Controls */}
@@ -285,9 +185,9 @@ const Feedback = () => {
                     <div className="h-10 w-10 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
                       <span className="text-white font-medium">
                         {feedback.patient
-                          .split(" ")
+                          ?.split(" ")
                           .map((n) => n[0])
-                          .join("")}
+                          .join("") || "P"}
                       </span>
                     </div>
                     <div>
@@ -306,7 +206,7 @@ const Feedback = () => {
                         <Star
                           key={i}
                           className={`h-5 w-5 ${
-                            i < feedback.rating
+                            i < (feedback.rate ?? 0)
                               ? "text-yellow-400 fill-current"
                               : "text-gray-300"
                           }`}
@@ -314,20 +214,20 @@ const Feedback = () => {
                       ))}
                       <span
                         className={`ml-2 font-medium ${getRatingColor(
-                          feedback.rating
+                          feedback.rate ?? 0
                         )}`}
                       >
-                        {feedback.rating}/5
+                        {feedback.rate}/5
                       </span>
                     </div>
 
                     <span className="text-sm text-gray-500 flex items-center">
                       <CalendarIcon className="h-4 w-4 mr-1" />
-                      {feedback.date}
+                      {new Date(feedback.createdAt).toLocaleDateString()}
                     </span>
 
                     <span className="text-sm text-gray-500">
-                      {feedback.department}
+                      {feedback.department || "General"}
                     </span>
                   </div>
                 </div>
@@ -341,23 +241,27 @@ const Feedback = () => {
                     {feedback.status === "reviewed" ? "Reviewed" : "Pending"}
                   </span>
 
+                  {/* Respond / Mark Reviewed Button */}
                   <button
-                    onClick={() =>
+                    onClick={() => {
                       setShowResponseForm((prev) => ({
                         ...prev,
                         [feedback.id]: !prev[feedback.id],
-                      }))
-                    }
-                    className="flex items-center space-x-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors text-sm"
+                      }));
+                      feedback.status = "reviewed"; // mark as reviewed
+                    }}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors"
                   >
                     <MessageCircle className="h-4 w-4" />
-                    <span>{feedback.response ? "Edit" : "Respond"}</span>
+                    <span>
+                      {feedback.response ? "Edit Response" : "Respond"}
+                    </span>
                   </button>
                 </div>
               </div>
 
               <p className="text-gray-700 mb-4 leading-relaxed">
-                {feedback.comment}
+                {feedback.content}
               </p>
 
               {/* Response Form */}
@@ -372,7 +276,7 @@ const Feedback = () => {
                       handleResponseChange(feedback.id, e.target.value)
                     }
                     rows={3}
-                   setting className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                     placeholder="Enter your response to this feedback..."
                   />
                   <div className="flex justify-end space-x-2 mt-3">
@@ -430,6 +334,41 @@ const Feedback = () => {
             </p>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
+
+// Small reusable component for stats cards
+const StatCard = ({
+  icon,
+  label,
+  value,
+  bg,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number | string;
+  bg: string;
+}) => {
+  const colors: Record<string, string> = {
+    emerald: "bg-emerald-100",
+    green: "bg-green-100",
+    yellow: "bg-yellow-100",
+    blue: "bg-blue-100",
+  };
+  return (
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="flex items-center">
+        <div
+          className={`h-10 w-10 ${colors[bg]} rounded-xl flex items-center justify-center mr-4`}
+        >
+          {icon}
+        </div>
+        <div>
+          <p className="text-sm font-medium text-gray-600">{label}</p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+        </div>
       </div>
     </div>
   );

@@ -1,236 +1,76 @@
-import React, { useState } from "react";
-import { Calendar, Users, FileText, MessageCircle, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React from "react";
 import StaffSidebar from "@/components/staff/StaffSidebar";
 
 const StaffDashboard = () => {
-  const [activeSection, setActiveSection] = useState("overview");
-
-  // Mock data
-  const stats = {
-    todayAppointments: 8,
-    pendingReviews: 3,
-    activePatients: 42,
-    newMessages: 5,
-  };
-
-  const todayAppointments = [
-    {
-      id: 1,
-      patient: "John Doe",
-      time: "9:30 AM",
-      type: "General Checkup",
-      status: "confirmed",
-    },
-    {
-      id: 2,
-      patient: "Jane Smith",
-      time: "10:15 AM",
-      type: "Follow-up",
-      status: "confirmed",
-    },
-    {
-      id: 3,
-      patient: "Robert Johnson",
-      time: "11:00 AM",
-      type: "Physical Exam",
-      status: "pending",
-    },
-    {
-      id: 4,
-      patient: "Lisa Anderson",
-      time: "1:30 PM",
-      type: "Consultation",
-      status: "confirmed",
-    },
-    {
-      id: 5,
-      patient: "Michael Chen",
-      time: "2:45 PM",
-      type: "Review",
-      status: "confirmed",
-    },
-  ];
-
-  const pendingReviews = [
-    {
-      id: 1,
-      patient: "David Wilson",
-      type: "Lab Results",
-      time: "3 hours ago",
-    },
-    {
-      id: 2,
-      patient: "Emily Rodriguez",
-      type: "Imaging Report",
-      time: "5 hours ago",
-    },
-    {
-      id: 3,
-      patient: "James Taylor",
-      type: "Specialist Referral",
-      time: "1 day ago",
-    },
-  ];
-
-  const StatCard = ({ title, value, icon: Icon, color = "amber" }) => (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100 hover:shadow-md transition-shadow duration-300">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-amber-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
-        </div>
-        <div
-          className={`h-12 w-12 bg-${color}-100 rounded-xl flex items-center justify-center`}
-        >
-          <Icon className={`h-6 w-6 text-${color}-600`} />
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-amber-50">
+    <div className="min-h-screen bg-emerald-50">
+      {/* Sidebar */}
       <StaffSidebar />
 
+      {/* Main Content */}
       <div className="ml-64 p-8">
+        {/* Header */}
         <header className="mb-8">
-          <h1 className="text-2xl font-bold text-amber-900">Staff Dashboard</h1>
-          <p className="text-amber-700">Welcome back, Dr. Johnson</p>
+          <h1 className="text-3xl font-semibold text-emerald-900">
+            Welcome, Staff Member
+          </h1>
+          <p className="text-lg text-emerald-700 mt-2">
+            Thank you for your dedication to patient care.
+          </p>
         </header>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard
-            title="Today's Appointments"
-            value={stats.todayAppointments}
-            icon={Calendar}
-            color="amber"
-          />
-          <StatCard
-            title="Pending Reviews"
-            value={stats.pendingReviews}
-            icon={FileText}
-            color="orange"
-          />
-          <StatCard
-            title="Active Patients"
-            value={stats.activePatients}
-            icon={Users}
-            color="brown"
-          />
-          <StatCard
-            title="New Messages"
-            value={stats.newMessages}
-            icon={MessageCircle}
-            color="yellow"
-          />
-        </div>
+        {/* Main Content */}
+        <div className="bg-white rounded-2xl shadow-sm border border-emerald-100 p-10 max-w-4xl">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6 border-b border-emerald-100 pb-4">
+            About This Platform
+          </h2>
 
-        {/* Recent Activity Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Today's Appointments */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-amber-900">
-                Today's Appointments
-              </h3>
-              <Button className="bg-amber-600 hover:bg-amber-700 text-white text-sm">
-                View All
-              </Button>
-            </div>
-            <div className="space-y-4">
-              {todayAppointments.map((appt) => (
-                <div
-                  key={appt.id}
-                  className="flex items-center justify-between p-4 bg-amber-50 rounded-xl"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div
-                      className={`h-2 w-2 rounded-full ${
-                        appt.status === "confirmed"
-                          ? "bg-green-500"
-                          : "bg-yellow-500"
-                      }`}
-                    ></div>
-                    <div>
-                      <p className="font-medium text-amber-900">
-                        {appt.patient}
-                      </p>
-                      <p className="text-sm text-amber-700">
-                        {appt.time} • {appt.type}
-                      </p>
-                    </div>
-                  </div>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      appt.status === "confirmed"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {appt.status}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div className="space-y-6 text-gray-700 leading-relaxed">
+            <p>
+              This digital platform is designed to support your daily work and
+              streamline administrative tasks, including patient records,
+              appointment coordination, and medical documentation.
+            </p>
 
-          {/* Pending Reviews */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-amber-900">
-                Pending Reviews
-              </h3>
-              <Button
-                variant="outline"
-                className="text-amber-700 border-amber-200 hover:bg-amber-50 text-sm"
-              >
-                Review All
-              </Button>
-            </div>
-            <div className="space-y-4">
-              {pendingReviews.map((review) => (
-                <div key={review.id} className="p-4 bg-orange-50 rounded-xl">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-medium text-amber-900">
-                      {review.patient}
-                    </p>
-                    <div className="flex">
-                      <Clock className="h-4 w-4 text-amber-600" />
-                    </div>
-                  </div>
-                  <p className="text-sm text-amber-700 mb-2">{review.type}</p>
-                  <p className="text-xs text-amber-600">{review.time}</p>
-                </div>
-              ))}
-            </div>
+            <p>
+              It reduces paperwork, improves accuracy, and ensures that patient
+              information is secure, up-to-date, and easily accessible when
+              needed.
+            </p>
+
+            <p>
+              <strong className="text-emerald-800">
+                Every action you take on this platform is logged and contributes
+                to your performance tracking.
+              </strong>
+              From updating records to attending appointments, your engagement
+              and professionalism are monitored.
+            </p>
+
+            <p>
+              Most importantly,{" "}
+              <strong className="text-emerald-800">
+                your service quality is evaluated through patient feedback
+              </strong>
+              . Each patient has the opportunity to share their experience, and
+              these reviews are reviewed regularly by clinic management.
+            </p>
+
+            <p className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mt-4">
+              <strong>Reminder:</strong> Treat every interaction with
+              professionalism, empathy, and care. Your role directly impacts
+              patient trust and the clinic’s reputation.
+            </p>
+
+            <p className="text-sm text-gray-500 italic mt-6">
+              Thank you for your commitment to excellence in healthcare.
+            </p>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
-          <h3 className="text-lg font-semibold text-amber-900 mb-4">
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="flex flex-col items-center justify-center py-6 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition-colors">
-              <Calendar className="h-6 w-6 text-amber-600 mb-2" />
-              <span className="font-medium text-amber-900">
-                Schedule Appointment
-              </span>
-            </Button>
-            <Button className="flex flex-col items-center justify-center py-6 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl transition-colors">
-              <FileText className="h-6 w-6 text-orange-600 mb-2" />
-              <span className="font-medium text-orange-900">
-                Create Patient Record
-              </span>
-            </Button>
-            <Button className="flex flex-col items-center justify-center py-6 bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 rounded-xl transition-colors">
-              <MessageCircle className="h-6 w-6 text-yellow-600 mb-2" />
-              <span className="font-medium text-yellow-900">Send Message</span>
-            </Button>
-          </div>
+        {/* Footer */}
+        <div className="mt-10 text-center text-sm text-emerald-600">
+          <p>Clinic Management System • Secure • HIPAA Compliant</p>
         </div>
       </div>
     </div>

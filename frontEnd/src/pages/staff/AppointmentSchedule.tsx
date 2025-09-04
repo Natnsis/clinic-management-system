@@ -29,42 +29,67 @@ const AppointmentSchedule = () => {
   const [loadingAll, setLoadingAll] = useState(true);
 
   const getAppointments = useAppointmentStore((s) => s.fetchItems);
-  const appointmentsList = useAppointmentStore((s) => s.items) as Appointment[];
+  const rawAppointments = useAppointmentStore((s) => s.items); // May not be array!
 
   const getPatientById = usePatientStore((s) => s.fetchItemsById);
-  const patients = usePatientStore((s) => s.items) as Patient[];
+  const rawPatients = usePatientStore((s) => s.items);
 
   const getStaffById = useStaffStore((s) => s.fetchItemsById);
-  const staff = useStaffStore((s) => s.items) as Staff[];
+  const rawStaff = useStaffStore((s) => s.items);
 
   useEffect(() => {
     const fetchAllData = async () => {
       setLoadingAll(true);
-      // 1️⃣ Fetch appointments first
-      await getAppointments();
+      try {
+        // 1️⃣ Fetch appointments
+        await getAppointments();
 
-      // 2️⃣ Get the latest appointments
-      const appointments = useAppointmentStore.getState().items;
+        // 2️⃣ Get latest appointments from store
+        const appointments = useAppointmentStore.getState().items;
 
-      // 3️⃣ Extract unique patient and staff IDs
-      const patientIds = [...new Set(appointments.map((a) => a.patientId))];
-      const staffIds = [...new Set(appointments.map((a) => a.staffId))];
+        // 3️⃣ Extract unique patient and staff IDs safely
+        const patientIds = [
+          ...new Set(
+            Array.isArray(appointments)
+              ? appointments.map((a) => a.patientId).filter(Boolean)
+              : []
+          ),
+        ];
 
-      // 4️⃣ Fetch all patients and staff in parallel
-      await Promise.all([
-        ...patientIds.map((id) => getPatientById(id)),
-        ...staffIds.map((id) => getStaffById(id)),
-      ]);
+        const staffIds = [
+          ...new Set(
+            Array.isArray(appointments)
+              ? appointments.map((a) => a.staffId).filter(Boolean)
+              : []
+          ),
+        ];
 
-      setLoadingAll(false);
+        // 4️⃣ Fetch related patients and staff in parallel
+        await Promise.all([
+          ...patientIds.map((id) => getPatientById(id)),
+          ...staffIds.map((id) => getStaffById(id)),
+        ]);
+      } catch (error) {
+        console.error("Failed to load schedule data:", error);
+      } finally {
+        setLoadingAll(false);
+      }
     };
 
     fetchAllData();
   }, [getAppointments, getPatientById, getStaffById]);
 
+  // 🔒 Safe arrays: ensure we always have arrays
+  const appointmentsList = Array.isArray(rawAppointments)
+    ? rawAppointments
+    : [];
+  const patients = Array.isArray(rawPatients) ? rawPatients : [];
+  const staff = Array.isArray(rawStaff) ? rawStaff : [];
+
   const findPatient = (id: string) => patients.find((p) => p.id === id);
   const findStaff = (id: string) => staff.find((s) => s.id === id);
 
+  // ✅ Now safe to filter!
   const filteredAppointments = appointmentsList.filter((a) => {
     const patient = findPatient(a.patientId);
     const staffMember = findStaff(a.staffId);
@@ -79,17 +104,18 @@ const AppointmentSchedule = () => {
       (patient?.studentId ?? "")
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      a.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (a.reason || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       staffName.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesType =
-      filterType === "all" || a.reason.toLowerCase().includes(filterType);
+      filterType === "all" ||
+      (a.reason || "").toLowerCase().includes(filterType);
 
     return matchesSearch && matchesType;
   });
 
   const getTypeColor = (type?: string) => {
-    const t = type?.toLowerCase() ?? "";
+    const t = (type || "").toLowerCase();
     if (t.includes("checkup")) return "bg-blue-100 text-blue-800";
     if (t.includes("follow-up")) return "bg-purple-100 text-purple-800";
     if (t.includes("consultation")) return "bg-orange-100 text-orange-800";
@@ -138,7 +164,7 @@ const AppointmentSchedule = () => {
             <select
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-4 py-2 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              className="px-4 py-2 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
               <option value="today">Today</option>
               <option value="tomorrow">Tomorrow</option>
@@ -149,7 +175,7 @@ const AppointmentSchedule = () => {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              className="px-4 py-2 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
               {appointmentTypes.map((t) => (
                 <option key={t} value={t}>
@@ -170,7 +196,9 @@ const AppointmentSchedule = () => {
         {/* Appointment Cards */}
         <div className="space-y-6">
           {loadingAll ? (
-            <p className="text-amber-700">Loading appointments...</p>
+            <p className="text-amber-700 text-center py-8">
+              Loading appointments...
+            </p>
           ) : filteredAppointments.length === 0 ? (
             <Card className="text-center py-12">
               <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
@@ -180,14 +208,11 @@ const AppointmentSchedule = () => {
               <p className="text-amber-700 mb-4">
                 Try adjusting your search or filter criteria.
               </p>
-              <Link
-                to="/appointmentAddingForm"
-                className="w-full flex justify-center"
-              >
-                <button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2 my-20 text-center rounded-lg px-5 py-3">
+              <Link to="/appointmentAddingForm" className="inline-block">
+                <Button className="bg-amber-600 hover:bg-amber-700">
                   <Plus className="h-4 w-4 mr-2" />
-                  Schedule Your First Appointment
-                </button>
+                  Schedule First Appointment
+                </Button>
               </Link>
             </Card>
           ) : (
@@ -213,7 +238,8 @@ const AppointmentSchedule = () => {
                               {patientName
                                 .split(" ")
                                 .map((n) => n[0])
-                                .join("")}
+                                .join("")
+                                .toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">

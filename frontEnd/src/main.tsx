@@ -12,12 +12,9 @@ import ManageStaff from "./pages/admin/ManageStaff.tsx";
 import PatientFeedback from "./pages/patient/PatientFeedback.tsx";
 import PatientDashboard from "./pages/patient/PatientDashboard.tsx";
 import AppointmentSchedule from "./pages/staff/AppointmentSchedule.tsx";
-import StaffMessages from "./pages/staff/StaffMessages.tsx";
-import PatientList from "./pages/staff/PatientList.tsx";
 import StaffDashboard from "./pages/staff/StaffDashboard.tsx";
 import StaffProfile from "./pages/staff/StaffProfile.tsx";
 import NotFound from "./NotFound.tsx";
-import StaffNotifications from "./pages/staff/StaffNotifications.tsx";
 import StaffPerscriptions from "./pages/staff/StaffPerscriptions.tsx";
 import AddStaffForm from "./components/forms/addStaffForm.tsx";
 import EditStaffForm from "./components/forms/editStaffForm.tsx";
@@ -35,12 +32,7 @@ const router = createBrowserRouter([
   { path: "/patientFeedback", element: <PatientFeedback /> },
   { path: "/patientDashboard", element: <PatientDashboard /> },
   { path: "/appointmentSchedule", element: <AppointmentSchedule /> },
-  { path: "/staffMessages", element: <StaffMessages /> },
-  { path: "/patientList", element: <PatientList /> },
   { path: "/staffDashboard", element: <StaffDashboard /> },
-  { path: "/staffNotification", element: <StaffNotifications /> },
-  { path: "/patientLists", element: <PatientList /> },
-  { path: "/staffMessages", element: <StaffMessages /> },
   { path: "/staffPrescriptions", element: <StaffPerscriptions /> },
   { path: "/staffProfile", element: <StaffProfile /> },
   { path: "/addStaff", element: <AddStaffForm /> },

@@ -55,28 +55,10 @@ const StaffSidebar = () => {
       link: "/appointmentSchedule",
     },
     {
-      icon: Bell,
-      label: "Notifications",
-      key: "notifications",
-      link: "/staffNotification",
-    },
-    {
-      icon: Users,
-      label: "Patient Lists",
-      key: "patients",
-      link: "/patientList",
-    },
-    {
       icon: FileText,
       label: "Prescriptions",
       key: "prescriptions",
       link: "/staffPrescriptions",
-    },
-    {
-      icon: MessageCircle,
-      label: "Messages",
-      key: "messages",
-      link: "/staffMessages",
     },
   ];
 

@@ -148,16 +148,22 @@ const ManagePatients = () => {
           </div>
 
           {filteredPatients.length === 0 && (
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No patients found
+            <div className="flex flex-col items-center justify-center py-16 px-6 bg-white rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-emerald-50 mb-6">
+                <Users className="h-10 w-10 text-emerald-600" />
+              </div>
+
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No Patients Found
               </h3>
-              <p className="text-gray-500">
-                Try adjusting your search criteria.
+
+              <p className="text-gray-500 text-center max-w-sm">
+                We couldn’t find any patients matching your search.
+                <br /> Try adjusting your criteria or check again later.
               </p>
-              <p className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white">
-                or apparently no patients registered at the moment
+
+              <p className="mt-6 inline-flex items-center gap-2 text-sm px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-medium">
+                <span>✨</span> No patients registered yet
               </p>
             </div>
           )}
