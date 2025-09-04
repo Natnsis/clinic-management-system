@@ -9,10 +9,7 @@ import Dashboard from "./pages/admin/Dashboard.tsx";
 import Feedback from "./pages/admin/Feedback.tsx";
 import ManagePatients from "./pages/admin/ManagePatients.tsx";
 import ManageStaff from "./pages/admin/ManageStaff.tsx";
-import Notifications from "./pages/admin/Notifications.tsx";
-import Reports from "./pages/admin/Reports.tsx";
 import PatientFeedback from "./pages/patient/PatientFeedback.tsx";
-import MyAppointments from "./pages/patient/MyAppointments.tsx";
 import PatientDashboard from "./pages/patient/PatientDashboard.tsx";
 import AppointmentSchedule from "./pages/staff/AppointmentSchedule.tsx";
 import StaffMessages from "./pages/staff/StaffMessages.tsx";
@@ -35,10 +32,7 @@ const router = createBrowserRouter([
   { path: "/feedback", element: <Feedback /> },
   { path: "/managePatients", element: <ManagePatients /> },
   { path: "/manageStaff", element: <ManageStaff /> },
-  { path: "/notifications", element: <Notifications /> },
-  { path: "/reports", element: <Reports /> },
   { path: "/patientFeedback", element: <PatientFeedback /> },
-  { path: "/myAppointments", element: <MyAppointments /> },
   { path: "/patientDashboard", element: <PatientDashboard /> },
   { path: "/appointmentSchedule", element: <AppointmentSchedule /> },
   { path: "/staffMessages", element: <StaffMessages /> },

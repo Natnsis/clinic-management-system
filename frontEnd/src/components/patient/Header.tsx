@@ -17,7 +17,6 @@ const Header = () => {
 
   const navItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/patientDashboard" },
-    { icon: Calendar, label: "Appointments", href: "/myAppointments" },
     { icon: MessageCircle, label: "Feedback", href: "/patientFeedback" },
   ];
 

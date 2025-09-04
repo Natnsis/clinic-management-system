@@ -79,27 +79,6 @@ model Admin {
   updatedAt DateTime? @updatedAt
 }
 
-model Staff {
-  id           String       @id @default(uuid())
-  fName        String
-  lName        String
-  email        String       @unique
-  password     String
-  department   Department
-  role         Role
-  status       Status     @default(inactive)
-  availability Availability
-  phoneNumber  Int
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-
-  // Relationships
-  staffProfile  StaffProfile?
-  appointments  Appointments[] 
-  prescriptions Prescriptions[] 
-  reports       Reports[] 
-  messages      Message[]
-}
 
 model Patients {
   id              String         @id @default(uuid())
@@ -155,19 +134,47 @@ model Prescriptions {
   staff      Staff    @relation(fields: [staffId], references: [id])
 }
 
+model Staff {
+  id           String        @id @default(uuid())
+  fName        String
+  lName        String
+  email        String        @unique
+  password     String
+  department   Department
+  role         Role
+  status       Status        @default(inactive)
+  availability Availability
+  phoneNumber  Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // Optional one-to-one relation
+  staffProfile  StaffProfile?
+
+  // One-to-many relations
+  appointments  Appointments[]
+  prescriptions Prescriptions[]
+  reports       Reports[]
+  messages      Message[]
+  feedbacks     Feedbacks[]  
+}
+
 model Feedbacks {
-  id        String        @id @default(uuid())
+  id        String          @id @default(uuid())
   patientId String
+  staffId   String
   status    FeedbackStatus
   content   String
   rate      Int
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
-  // Relationships
-  patient   Patients @relation(fields: [patientId], references: [id])
-  response  Response? // A feedback can have one response
+  // Relations
+  patient   Patients        @relation(fields: [patientId], references: [id])
+  staff     Staff           @relation(fields: [staffId], references: [id])
+  response  Response?     
 }
+
 
 model Response {
   id         String   @id @default(uuid())

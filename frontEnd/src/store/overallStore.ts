@@ -147,6 +147,7 @@ export type Appointment = {
 export type Feedback = {
   id: string;
   patientId: string;
+  staffId: string;
   status: string;
   content: string;
   rate: number;

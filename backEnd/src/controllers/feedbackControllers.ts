@@ -5,10 +5,11 @@ const prisma = new PrismaClient();
 
 export async function sendFeedback(req: Request, res: Response) {
   try {
-    const { patientId, status, content, rate } = req.body;
+    const { patientId, status, content, rate, staffId } = req.body;
     await prisma.feedbacks.create({
       data: {
         patientId,
+        staffId,
         status,
         content,
         rate: parseInt(rate),

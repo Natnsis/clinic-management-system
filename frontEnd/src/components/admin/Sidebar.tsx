@@ -58,18 +58,6 @@ const Sidebar = () => {
       key: "manageStaff",
       link: "/manageStaff",
     },
-    {
-      icon: Bell,
-      label: "Notifications",
-      key: "notifications",
-      link: "/notifications",
-    },
-    {
-      icon: ClipboardMinus,
-      label: "Report",
-      key: "report",
-      link: "/reports",
-    },
   ];
 
   return (
