@@ -12,13 +12,8 @@ import ManageStaff from "./pages/admin/ManageStaff.tsx";
 import Notifications from "./pages/admin/Notifications.tsx";
 import Reports from "./pages/admin/Reports.tsx";
 import PatientFeedback from "./pages/patient/PatientFeedback.tsx";
-import MedicalHistory from "./pages/patient/MedicalHistory.tsx";
-import Messages from "./pages/patient/Messages.tsx";
 import MyAppointments from "./pages/patient/MyAppointments.tsx";
 import PatientDashboard from "./pages/patient/PatientDashboard.tsx";
-import PatientNotifications from "./pages/patient/PatientNotifications.tsx";
-import Prescriptions from "./pages/patient/Prescriptions.tsx";
-import Profile from "./pages/patient/Profile.tsx";
 import AppointmentSchedule from "./pages/staff/AppointmentSchedule.tsx";
 import StaffMessages from "./pages/staff/StaffMessages.tsx";
 import PatientList from "./pages/staff/PatientList.tsx";
@@ -43,13 +38,8 @@ const router = createBrowserRouter([
   { path: "/notifications", element: <Notifications /> },
   { path: "/reports", element: <Reports /> },
   { path: "/patientFeedback", element: <PatientFeedback /> },
-  { path: "/medicalHistory", element: <MedicalHistory /> },
-  { path: "/messages", element: <Messages /> },
   { path: "/myAppointments", element: <MyAppointments /> },
   { path: "/patientDashboard", element: <PatientDashboard /> },
-  { path: "/patientNotification", element: <PatientNotifications /> },
-  { path: "/prescriptions", element: <Prescriptions /> },
-  { path: "/profile", element: <Profile /> },
   { path: "/appointmentSchedule", element: <AppointmentSchedule /> },
   { path: "/staffMessages", element: <StaffMessages /> },
   { path: "/patientList", element: <PatientList /> },
