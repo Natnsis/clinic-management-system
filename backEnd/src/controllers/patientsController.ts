@@ -37,7 +37,6 @@ export async function deletePatient(req: Request, res: Response) {
 
     // Delete related records first
     await prisma.appointments.deleteMany({ where: { patientId: userId } });
-    await prisma.records.deleteMany({ where: { patientId: userId } });
     await prisma.prescriptions.deleteMany({ where: { patientId: userId } });
     await prisma.feedbacks.deleteMany({ where: { patientId: userId } });
     await prisma.message.deleteMany({

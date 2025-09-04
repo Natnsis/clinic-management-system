@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FileText,
   Search,
@@ -24,21 +24,28 @@ const Prescriptions = () => {
   const getPrescriptions = usePrescriptionStore((state) => state.fetchItems);
   const deletePrescription = usePrescriptionStore((state) => state.deleteItem);
   const updatePrescription = usePrescriptionStore((state) => state.updateItem);
-  const prescriptions = usePrescriptionStore((state) => state.items) as Prescription[];
+  const prescriptions = usePrescriptionStore(
+    (state) => state.items
+  ) as Prescription[];
 
   useEffect(() => {
     getPrescriptions();
   }, [getPrescriptions]);
 
-
   const getStatusColor = (status: string) =>
-    status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800";
+    status === "active"
+      ? "bg-green-100 text-green-800"
+      : "bg-gray-100 text-gray-800";
 
   const getTypeColor = (prescription: Prescription) => {
     const reason = prescription.detail.toLowerCase();
     if (reason.includes("allergy")) return "bg-orange-100 text-orange-800";
-    if (reason.includes("fever") || reason.includes("pain")) return "bg-red-100 text-red-800";
-    if (reason.includes("supplement") || prescription.medication.toLowerCase().includes("vitamin"))
+    if (reason.includes("fever") || reason.includes("pain"))
+      return "bg-red-100 text-red-800";
+    if (
+      reason.includes("supplement") ||
+      prescription.medication.toLowerCase().includes("vitamin")
+    )
       return "bg-green-100 text-green-800";
     if (reason.includes("chronic")) return "bg-purple-100 text-purple-800";
     return "bg-blue-100 text-blue-800";
@@ -50,7 +57,8 @@ const Prescriptions = () => {
       p.detail.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.staffId.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesType = filterType === "all" || p.detail.toLowerCase().includes(filterType);
+    const matchesType =
+      filterType === "all" || p.detail.toLowerCase().includes(filterType);
 
     return matchesSearch && matchesType;
   });
@@ -65,7 +73,9 @@ const Prescriptions = () => {
             <FileText className="h-8 w-8 text-purple-600" />
             <h1 className="text-2xl font-bold text-gray-900">Prescriptions</h1>
           </div>
-          <p className="text-gray-600">Manage your current and past prescriptions</p>
+          <p className="text-gray-600">
+            Manage your current and past prescriptions
+          </p>
         </div>
 
         {/* Controls */}
@@ -119,8 +129,12 @@ const Prescriptions = () => {
           {filteredPrescriptions.length === 0 ? (
             <Card className="text-center py-12">
               <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No prescriptions found</h3>
-              <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No prescriptions found
+              </h3>
+              <p className="text-gray-500">
+                Try adjusting your search or filter criteria.
+              </p>
             </Card>
           ) : (
             filteredPrescriptions.map((prescription) => (
@@ -139,10 +153,13 @@ const Prescriptions = () => {
                             <h3 className="text-lg font-semibold text-gray-900">
                               {prescription.medication}
                             </h3>
-                            <Badge variant="secondary" className={getTypeColor(prescription)}>
+                            <Badge
+                              variant="secondary"
+                              className={getTypeColor(prescription)}
+                            >
                               {prescription.detail}
                             </Badge>
-                                                    </div>
+                          </div>
 
                           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
                             <div className="flex items-center">
@@ -159,40 +176,60 @@ const Prescriptions = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                         <div className="p-3 bg-gray-50 rounded-lg">
-                          <div className="text-sm font-medium text-gray-600">Dosage</div>
-                          <div className="font-semibold text-gray-900">{prescription.duration}</div>
+                          <div className="text-sm font-medium text-gray-600">
+                            Dosage
+                          </div>
+                          <div className="font-semibold text-gray-900">
+                            {prescription.duration}
+                          </div>
                         </div>
                         <div className="p-3 bg-gray-50 rounded-lg">
-                          <div className="text-sm font-medium text-gray-600">Frequency</div>
-                          <div className="font-semibold text-gray-900">{prescription.frequency}</div>
+                          <div className="text-sm font-medium text-gray-600">
+                            Frequency
+                          </div>
+                          <div className="font-semibold text-gray-900">
+                            {prescription.frequency}
+                          </div>
                         </div>
                         <div className="p-3 bg-gray-50 rounded-lg">
-                          <div className="text-sm font-medium text-gray-600">Refills</div>
-                          <div className="font-semibold text-gray-900">{prescription.refills}</div>
+                          <div className="text-sm font-medium text-gray-600">
+                            Refills
+                          </div>
+                          <div className="font-semibold text-gray-900">
+                            {prescription.refills}
+                          </div>
                         </div>
                         <div className="p-3 bg-gray-50 rounded-lg">
-                          <div className="text-sm font-medium text-gray-600">Patient ID</div>
-                          <div className="font-semibold text-gray-900">{prescription.patientId}</div>
+                          <div className="text-sm font-medium text-gray-600">
+                            Patient ID
+                          </div>
+                          <div className="font-semibold text-gray-900">
+                            {prescription.patientId}
+                          </div>
                         </div>
                       </div>
 
                       <div>
-                        <h4 className="text-sm font-medium text-gray-900 mb-1">Instructions</h4>
+                        <h4 className="text-sm font-medium text-gray-900 mb-1">
+                          Instructions
+                        </h4>
                         <p className="text-gray-700">{prescription.detail}</p>
                       </div>
                     </div>
 
                     {/* Actions */}
                     <div className="flex flex-col space-y-2 mt-6 lg:mt-0 lg:ml-6">
-                      {prescription.status === "active" && prescription.refills > 0 && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-green-200 text-green-700 hover:bg-green-50"
-                        >
-                          <AlertTriangle className="h-4 w-4 mr-2" /> Request Refill
-                        </Button>
-                      )}
+                      {prescription.status === "active" &&
+                        prescription.refills > 0 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-green-200 text-green-700 hover:bg-green-50"
+                          >
+                            <AlertTriangle className="h-4 w-4 mr-2" /> Request
+                            Refill
+                          </Button>
+                        )}
                       <Button
                         variant="outline"
                         size="sm"
