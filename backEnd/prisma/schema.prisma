@@ -115,7 +115,6 @@ model Patients {
   // Relationships
   patientProfile  PatientProfile?
   appointments    Appointments[] // A patient can have multiple appointments
-  records         Records[] // A patient can have multiple medical records
   prescriptions   Prescriptions[] // A patient can have multiple prescriptions
   feedbacks       Feedbacks[] // A patient can submit multiple feedbacks
   messages        Message[] // A patient can send/receive multiple messages
@@ -138,17 +137,6 @@ model Appointments {
   staff     Staff    @relation(fields: [staffId], references: [id])
 }
 
-model Records {
-  id        String   @id @default(uuid())
-  illness   String
-  patientId String
-  treatment String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relationships
-  patient   Patients @relation(fields: [patientId], references: [id])
-}
 
 model Prescriptions {
   id         String   @id @default(uuid())

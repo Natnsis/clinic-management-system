@@ -68,12 +68,6 @@ const StaffSidebar = () => {
     },
     {
       icon: FileText,
-      label: "Patient Records",
-      key: "records",
-      link: "/patientRecords",
-    },
-    {
-      icon: FileText,
       label: "Prescriptions",
       key: "prescriptions",
       link: "/staffPrescriptions",

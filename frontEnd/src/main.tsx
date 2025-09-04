@@ -22,7 +22,6 @@ import Profile from "./pages/patient/Profile.tsx";
 import AppointmentSchedule from "./pages/staff/AppointmentSchedule.tsx";
 import StaffMessages from "./pages/staff/StaffMessages.tsx";
 import PatientList from "./pages/staff/PatientList.tsx";
-import PatientRecords from "./pages/staff/PatientRecords.tsx";
 import StaffDashboard from "./pages/staff/StaffDashboard.tsx";
 import StaffProfile from "./pages/staff/StaffProfile.tsx";
 import NotFound from "./NotFound.tsx";
@@ -54,11 +53,9 @@ const router = createBrowserRouter([
   { path: "/appointmentSchedule", element: <AppointmentSchedule /> },
   { path: "/staffMessages", element: <StaffMessages /> },
   { path: "/patientList", element: <PatientList /> },
-  { path: "/patientRecords", element: <PatientRecords /> },
   { path: "/staffDashboard", element: <StaffDashboard /> },
   { path: "/staffNotification", element: <StaffNotifications /> },
   { path: "/patientLists", element: <PatientList /> },
-  { path: "/patientRecords", element: <PatientRecords /> },
   { path: "/staffMessages", element: <StaffMessages /> },
   { path: "/staffPrescriptions", element: <StaffPerscriptions /> },
   { path: "/staffProfile", element: <StaffProfile /> },
