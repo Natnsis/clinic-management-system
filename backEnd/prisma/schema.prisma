@@ -64,10 +64,7 @@ enum Refills {
   four_refills
 }
 
-enum Sender{
-  patient
-  staff
-}
+
 
 //models
 
@@ -92,11 +89,9 @@ model Patients {
   updatedAt       DateTime?      @updatedAt
 
   // Relationships
-  patientProfile  PatientProfile?
   appointments    Appointments[] // A patient can have multiple appointments
   prescriptions   Prescriptions[] // A patient can have multiple prescriptions
   feedbacks       Feedbacks[] // A patient can submit multiple feedbacks
-  messages        Message[] // A patient can send/receive multiple messages
 }
 
 model Appointments {
@@ -148,14 +143,9 @@ model Staff {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
-  // Optional one-to-one relation
-  staffProfile  StaffProfile?
-
   // One-to-many relations
   appointments  Appointments[]
   prescriptions Prescriptions[]
-  reports       Reports[]
-  messages      Message[]
   feedbacks     Feedbacks[]  
 }
 
@@ -172,78 +162,6 @@ model Feedbacks {
   // Relations
   patient   Patients        @relation(fields: [patientId], references: [id])
   staff     Staff           @relation(fields: [staffId], references: [id])
-  response  Response?     
-}
-
-
-model Response {
-  id         String   @id @default(uuid())
-  feedbackId String   @unique // One-to-one relationship with Feedback
-  content    String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // Relationships
-  feedback   Feedbacks @relation(fields: [feedbackId], references: [id])
-}
-
-model Reports {
-  id        String      @id @default(uuid())
-  title     String
-  staffId   String
-  status    ReportStatus
-  priority  Priority
-  content   String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  // Relationships
-  staff     Staff @relation(fields: [staffId], references: [id])
-}
-
-model Message {
-  id        String   @id @default(uuid())
-  content   String
-  patientId String
-  staffId   String
-  sender    Sender
-  time      DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relationships
-  patient   Patients @relation(fields: [patientId], references: [id])
-  staff     Staff    @relation(fields: [staffId], references: [id])
-}
-
-model StaffProfile {
-  staffId        String   @id @unique // One-to-one relationship with Staff
-  officeHours    String 
-  Education      String
-  Experience     Int
-  Role           String
-  specialization String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  // Relationships
-  staff          Staff @relation(fields: [staffId], references: [id])
-}
-
-model PatientProfile {
-  patientId         String   @id @unique // One-to-one relationship with Patients
-  emergencyContact  String
-  year              String
-  phoneNumber       Int
-  address           String
-  major             String
-  InsuranceProvider String @default("AssosaUniversity")
-  policyNumber      String @default("haha_123456")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relationships
-  patient           Patients @relation(fields: [patientId], references: [id])
 }
 
 
