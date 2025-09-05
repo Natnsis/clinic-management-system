@@ -1,5 +1,5 @@
-import  { useEffect, useState } from "react";
-import { FileText, Search, Plus, Edit, Eye } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FileText, Search, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import StaffSidebar from "@/components/staff/StaffSidebar";
 import { Link } from "react-router-dom";
 import { usePrescriptionStore, type Prescription } from "@/store/overallStore";
 
+// Medication type filters
 const medicationTypes = [
   "all",
   "antibiotics",
@@ -20,71 +21,109 @@ const medicationTypes = [
 
 const Prescriptions = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("active");
   const [filterType, setFilterType] = useState("all");
 
   const getPrescriptions = usePrescriptionStore((state) => state.fetchItems);
+  const deletePrescription = usePrescriptionStore((state) => state.deleteItem);
   const prescriptions = usePrescriptionStore(
     (state) => state.items
   ) as Prescription[];
-  console.log(prescriptions);
+
   useEffect(() => {
     getPrescriptions();
   }, [getPrescriptions]);
 
-  // Filtered prescriptions
+  // Filtered prescriptions — search + type only
   const filteredPrescriptions = prescriptions.filter((prescription) => {
-    const patient = prescription.patient ?? "";
-    const medication = prescription.medication ?? "";
-    const reason = prescription.reason ?? "";
-    const patientId = prescription.patientId ?? "";
+    const patient = prescription.patient?.name || prescription.patient || "";
+    const medication = prescription.medication || "";
+    const reason = prescription.reason || "";
+    const patientId = prescription.patientId || "";
 
     const matchesSearch =
       patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
       medication.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
       patientId.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus =
-      filterStatus === "all" || prescription.status === filterStatus;
 
     const matchesType =
       filterType === "all" ||
-      (reason.toLowerCase().includes("allergy") && filterType === "allergy") ||
-      ((reason.toLowerCase().includes("fever") ||
-        reason.toLowerCase().includes("pain")) &&
-        filterType === "pain relief") ||
-      (reason.toLowerCase().includes("supplement") &&
-        filterType === "vitamins");
+      {
+        allergy: reason.toLowerCase().includes("allergy"),
+        "pain relief": ["pain", "fever", "headache", "ache"].some((word) =>
+          reason.toLowerCase().includes(word)
+        ),
+        vitamins: ["vitamin", "supplement", "multivitamin"].some(
+          (word) =>
+            medication.toLowerCase().includes(word) ||
+            reason.toLowerCase().includes(word)
+        ),
+        antibiotics: [
+          "antibiotic",
+          "amoxicillin",
+          "azithromycin",
+          "infection",
+        ].some((word) => medication.toLowerCase().includes(word)),
+        chronic: [
+          "chronic",
+          "diabetes",
+          "hypertension",
+          "asthma",
+          "arthritis",
+        ].some((word) => reason.toLowerCase().includes(word)),
+      }[filterType];
 
-    return matchesSearch && matchesStatus && matchesType;
+    return matchesSearch && matchesType;
   });
 
-  const getStatusColor = (status: string) => {
-    return status === "active"
-      ? "bg-green-100 text-green-800"
-      : "bg-gray-100 text-gray-800";
-  };
-
+  // Badge color by type
   const getTypeColor = (prescription: Prescription) => {
-    const reason = (prescription.reason ?? "").toLowerCase();
-    const medication = (prescription.medication ?? "").toLowerCase();
+    const reason = (prescription.reason || "").toLowerCase();
+    const medication = (prescription.medication || "").toLowerCase();
 
     if (reason.includes("allergy")) return "bg-orange-100 text-orange-800";
-    if (reason.includes("fever") || reason.includes("pain"))
+    if (
+      reason.includes("pain") ||
+      reason.includes("fever") ||
+      reason.includes("headache")
+    )
       return "bg-red-100 text-red-800";
-    if (reason.includes("supplement") || medication.includes("vitamin"))
+    if (medication.includes("vitamin") || reason.includes("supplement"))
       return "bg-green-100 text-green-800";
-    if (reason.includes("chronic")) return "bg-purple-100 text-purple-800";
-    return "bg-blue-100 text-blue-800";
+    if (
+      ["chronic", "diabetes", "hypertension", "asthma"].some((r) =>
+        reason.includes(r)
+      )
+    )
+      return "bg-purple-100 text-purple-800";
+    if (medication.includes("antibiotic")) return "bg-blue-100 text-blue-800";
+    return "bg-gray-100 text-gray-800";
   };
 
+  // Stats
   const stats = {
     totalPrescriptions: prescriptions.length,
-    active: prescriptions.filter((p) => p.status === "active").length,
-    completed: prescriptions.filter((p) => p.status === "completed").length,
-    refillsAvailable: prescriptions
-      .filter((p) => p.status === "active" && p.refills > 0)
-      .reduce((sum, p) => sum + p.refills, 0),
+    refillsAvailable: prescriptions.reduce(
+      (sum, p) => sum + (p.refills > 0 ? p.refills : 0),
+      0
+    ),
+  };
+
+  // Handle delete with confirmation
+  const handleDelete = (id: string, patientName: string) => {
+    const confirmed = window.confirm(
+      `⚠️ Delete prescription for ${patientName}? This cannot be undone.`
+    );
+
+    if (confirmed) {
+      try {
+        deletePrescription(id);
+        console.log("Prescription deleted:", id);
+      } catch (err) {
+        console.error("Failed to delete prescription:", err);
+        alert("Could not delete prescription. Please try again.");
+      }
+    }
   };
 
   return (
@@ -93,27 +132,37 @@ const Prescriptions = () => {
       <div className="ml-64 p-8">
         {/* Header */}
         <header className="mb-8">
-          <div className="flex items-center space-x-3 mb-2">
-            <FileText className="h-8 w-8 text-amber-600" />
-            <h1 className="text-2xl font-bold text-amber-900">Prescriptions</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <FileText className="h-8 w-8 text-amber-600" />
+              <div>
+                <h1 className="text-2xl font-bold text-amber-900">
+                  Prescriptions
+                </h1>
+                <p className="text-amber-700">Manage patient prescriptions</p>
+              </div>
+            </div>
+
+            {/* Add New Prescription Button */}
+            <Link to="/addPrescriptionForm">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white px-6">
+                <Plus className="h-4 w-4 mr-2" />
+                Issue Prescription
+              </Button>
+            </Link>
           </div>
-          <p className="text-amber-700">
-            Manage patient prescriptions and medication orders
-          </p>
         </header>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {[
             {
               label: "Total Prescriptions",
               value: stats.totalPrescriptions,
               color: "amber-500",
             },
-            { label: "Active", value: stats.active, color: "green-500" },
-            { label: "Completed", value: stats.completed, color: "blue-500" },
             {
-              label: "Refills Available",
+              label: "With Refills",
               value: stats.refillsAvailable,
               color: "orange-500",
             },
@@ -151,19 +200,9 @@ const Prescriptions = () => {
             </div>
 
             <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="completed">Completed</option>
-            </select>
-
-            <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+              className="px-4 py-2 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
               <option value="all">All Types</option>
               {medicationTypes
@@ -174,13 +213,6 @@ const Prescriptions = () => {
                   </option>
                 ))}
             </select>
-
-            <Link to="/addPrescriptionForm">
-              <Button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2">
-                <Plus className="h-4 w-4" />
-                <span>Issue Prescription</span>
-              </Button>
-            </Link>
           </div>
         </div>
 
@@ -196,7 +228,6 @@ const Prescriptions = () => {
                     "Details",
                     "Duration",
                     "Refills",
-                    "Status",
                     "Actions",
                   ].map((header) => (
                     <th
@@ -209,99 +240,103 @@ const Prescriptions = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-amber-100">
-                {filteredPrescriptions.map((prescription) => (
-                  <tr
-                    key={prescription.id}
-                    className="hover:bg-amber-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage alt={prescription.patient} />
-                          <AvatarFallback className="bg-amber-100 text-amber-600">
-                            {prescription.patient[0] +
-                              prescription.patient.split(" ")[1][0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-amber-900">
-                            {prescription.patient}
-                          </div>
-                          <div className="text-sm text-amber-700">
-                            ID: {prescription.patientId}
+                {filteredPrescriptions.map((prescription) => {
+                  const patientName = prescription.patient || "Unknown Patient";
+                  return (
+                    <tr
+                      key={prescription.id}
+                      className="hover:bg-amber-50 transition-colors"
+                    >
+                      {/* Patient */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage alt={patientName} />
+                            <AvatarFallback className="bg-amber-100 text-amber-600">
+                              {patientName
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-amber-900">
+                              {patientName}
+                            </div>
+                            <div className="text-sm text-amber-700">
+                              ID: {prescription.patientId}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-amber-900">
-                        {prescription.medication}
-                      </div>
-                      <Badge
-                        variant="secondary"
-                        className={getTypeColor(prescription)}
-                      >
-                        {prescription.reason}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-amber-800">
-                        {prescription.dosage} • {prescription.frequency}
-                        <div className="text-xs text-amber-600 mt-1">
-                          Issued by: {prescription.doctor}
+                      </td>
+
+                      {/* Medication */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-amber-900">
+                          {prescription.medication}
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-amber-800">
-                        {prescription.startDate} to {prescription.endDate}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          prescription.refills > 0
-                            ? "bg-orange-100 text-orange-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {prescription.refills}{" "}
-                        {prescription.refills === 1 ? "refill" : "refills"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge
-                        variant="secondary"
-                        className={getStatusColor(prescription.status)}
-                      >
-                        {prescription.status}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-600">
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-amber-600 hover:text-amber-800 hover:bg-amber-100"
+                        <Badge
+                          variant="secondary"
+                          className={getTypeColor(prescription)}
                         >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-amber-600 hover:text-amber-800 hover:bg-amber-100"
+                          {prescription.reason || "General"}
+                        </Badge>
+                      </td>
+
+                      {/* Details */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-amber-800">
+                          {prescription.dosage} • {prescription.frequency}
+                          <div className="text-xs text-amber-600 mt-1">
+                            Issued by: {prescription.doctor || "Unknown"}
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Duration */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-amber-800">
+                          {prescription.startDate} → {prescription.endDate}
+                        </div>
+                      </td>
+
+                      {/* Refills */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            prescription.refills > 0
+                              ? "bg-orange-100 text-orange-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
                         >
-                          <Edit className="h-4 w-4" />
+                          {prescription.refills}{" "}
+                          {prescription.refills === 1 ? "refill" : "refills"}
+                        </span>
+                      </td>
+
+                      {/* Actions - Only Delete */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                          onClick={() =>
+                            handleDelete(prescription.id, patientName)
+                          }
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
                         </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
-          {/* Pagination placeholder */}
+          {/* Pagination (Placeholder) */}
           <div className="px-6 py-4 bg-amber-50 flex items-center justify-between">
             <p className="text-sm text-amber-800">
               Showing <span className="font-medium">1</span> to{" "}
@@ -338,17 +373,18 @@ const Prescriptions = () => {
           </div>
         </div>
 
+        {/* Empty State */}
         {filteredPrescriptions.length === 0 && (
           <div className="text-center py-12">
             <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-amber-900 mb-2">
               No prescriptions found
             </h3>
-            <p className="text-amber-700">
-              Try adjusting your search or filter criteria.
+            <p className="text-amber-700 mb-4">
+              Try adjusting your search or create a new one.
             </p>
             <Link to="/addPrescriptionForm">
-              <Button className="mt-4 bg-amber-600 hover:bg-amber-700 text-white">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white">
                 <Plus className="h-4 w-4 mr-2" />
                 Issue New Prescription
               </Button>

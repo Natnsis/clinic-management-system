@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  Users,
-  FileText,
   Calendar,
-  Shield,
-  Bell,
-  Clock,
+  FileText,
+  Users,
   MessageSquare,
-  Settings,
+  Shield,
+  Clock,
+  Bell,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -17,7 +16,6 @@ const App = () => {
   const [isVisible, setIsVisible] = useState({});
 
   useEffect(() => {
-    // Trigger initial visibility for all sections
     setTimeout(() => setIsVisible((prev) => ({ ...prev, hero: true })), 100);
     setTimeout(
       () => setIsVisible((prev) => ({ ...prev, features: true })),
@@ -27,11 +25,7 @@ const App = () => {
       () => setIsVisible((prev) => ({ ...prev, benefits: true })),
       500
     );
-    setTimeout(
-      () => setIsVisible((prev) => ({ ...prev, testimonials: true })),
-      700
-    );
-    setTimeout(() => setIsVisible((prev) => ({ ...prev, cta: true })), 900);
+    setTimeout(() => setIsVisible((prev) => ({ ...prev, cta: true })), 700);
   }, []);
 
   return (
@@ -67,12 +61,6 @@ const App = () => {
               >
                 Benefits
               </a>
-              <a
-                href="#testimonials"
-                className="text-emerald-700 hover:text-emerald-800 font-medium transition-colors"
-              >
-                Testimonials
-              </a>
             </nav>
 
             <div className="flex items-center space-x-4">
@@ -107,16 +95,22 @@ const App = () => {
                   </span>
                 </h1>
                 <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-                  Streamline appointments, patient records, and staff management
-                  in one intuitive platform designed for healthcare
-                  professionals.
+                  Streamline appointments, prescriptions, and patient feedback
+                  in one intuitive platform — built for student clinics and
+                  campus healthcare.
                 </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-lg px-8 py-6 h-auto min-w-48">
-                  Explore
-                </Button>
+                <a
+                  href="https://www.linkedin.com/in/natnael-sisay-orcadev/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-lg px-8 py-6 h-auto min-w-48">
+                    Contact Developer
+                  </Button>
+                </a>
                 <Link to="/login">
                   <Button
                     variant="outline"
@@ -136,11 +130,11 @@ const App = () => {
                     : "opacity-0 -translate-x-12"
                 }`}
               >
-                <div className="h-64 w-64 md:h-80 md:w-80 rounded-full overflow-hidden border-8 border-white shadow-2xl">
+                <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
                   <img
-                    src="https://placehold.co/400x400/10b981/ffffff?text=Clinic+Team"
-                    alt="Clinic Team"
-                    className="w-full h-full object-cover"
+                    src="/Doctors-bro.png"
+                    alt="Doctor and Student Patient"
+                    className="w-full h-auto max-w-xs md:max-w-sm object-cover"
                   />
                 </div>
                 <div className="absolute -bottom-4 -right-4 bg-white p-3 rounded-xl shadow-lg">
@@ -149,7 +143,7 @@ const App = () => {
                       <Calendar className="h-4 w-4 text-emerald-600" />
                     </div>
                     <div className="h-8 w-8 bg-teal-100 rounded-full flex items-center justify-center">
-                      <Users className="h-4 w-4 text-teal-600" />
+                      <MessageSquare className="h-4 w-4 text-teal-600" />
                     </div>
                     <div className="h-8 w-8 bg-emerald-100 rounded-full flex items-center justify-center">
                       <FileText className="h-4 w-4 text-emerald-600" />
@@ -173,11 +167,11 @@ const App = () => {
             }`}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Powerful Features for Modern Clinics
+              Designed for Student Clinic Needs
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Everything you need to run your clinic efficiently and provide
-              exceptional patient care
+              Everything your campus clinic needs to replace paperwork and
+              improve student healthcare access
             </p>
           </div>
 
@@ -195,24 +189,24 @@ const App = () => {
                   <Calendar className="h-6 w-6 text-emerald-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Smart Scheduling
+                  Smart Appointment Scheduling
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Intuitive calendar interface with drag-and-drop functionality,
-                  automated reminders, and conflict detection.
+                  Easy booking for students with real-time availability,
+                  automated reminders, and staff assignment.
                 </p>
                 <ul className="space-y-2 text-sm text-gray-600">
                   <li className="flex items-center">
                     <Clock className="h-4 w-4 text-emerald-500 mr-2" />
-                    Real-time availability
+                    Time-slot optimization
                   </li>
                   <li className="flex items-center">
                     <Bell className="h-4 w-4 text-emerald-500 mr-2" />
-                    Automated reminders
+                    SMS/email reminders
                   </li>
                   <li className="flex items-center">
                     <Users className="h-4 w-4 text-emerald-500 mr-2" />
-                    Resource allocation
+                    Staff & room allocation
                   </li>
                 </ul>
               </div>
@@ -228,27 +222,27 @@ const App = () => {
             >
               <div className="p-6">
                 <div className="h-12 w-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
-                  <FileText className="h-6 w-6 text-teal-600" />
+                  <MessageSquare className="h-6 w-6 text-teal-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Patient Records
+                  Patient Feedback System
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Secure, comprehensive electronic health records with
-                  customizable templates and easy search functionality.
+                  Collect student feedback after visits to improve care quality
+                  and clinic operations.
                 </p>
                 <ul className="space-y-2 text-sm text-gray-600">
                   <li className="flex items-center">
                     <Shield className="h-4 w-4 text-teal-500 mr-2" />
-                    HIPAA compliant
+                    Anonymous surveys
                   </li>
                   <li className="flex items-center">
-                    <MessageSquare className="h-4 w-4 text-teal-500 mr-2" />
-                    Patient communication
+                    <Bell className="h-4 w-4 text-teal-500 mr-2" />
+                    Automated feedback requests
                   </li>
                   <li className="flex items-center">
-                    <Settings className="h-4 w-4 text-teal-500 mr-2" />
-                    Custom templates
+                    <FileText className="h-4 w-4 text-teal-500 mr-2" />
+                    Exportable reports
                   </li>
                 </ul>
               </div>
@@ -264,27 +258,27 @@ const App = () => {
             >
               <div className="p-6">
                 <div className="h-12 w-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-emerald-600" />
+                  <FileText className="h-6 w-6 text-emerald-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Staff Management
+                  Prescription Control
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Efficient team coordination with role-based access, shift
-                  scheduling, and performance tracking.
+                  Issue, track, and manage prescriptions with refill controls
+                  and digital sharing.
                 </p>
                 <ul className="space-y-2 text-sm text-gray-600">
                   <li className="flex items-center">
-                    <Settings className="h-4 w-4 text-emerald-500 mr-2" />
-                    Role permissions
+                    <Shield className="h-4 w-4 text-emerald-500 mr-2" />
+                    Secure access
                   </li>
                   <li className="flex items-center">
                     <Clock className="h-4 w-4 text-emerald-500 mr-2" />
-                    Time tracking
+                    Refill tracking
                   </li>
                   <li className="flex items-center">
-                    <MessageSquare className="h-4 w-4 text-emerald-500 mr-2" />
-                    Internal messaging
+                    <Users className="h-4 w-4 text-emerald-500 mr-2" />
+                    Doctor & patient access
                   </li>
                 </ul>
               </div>
@@ -308,7 +302,7 @@ const App = () => {
           >
             <div>
               <img
-                src="https://placehold.co/600x400/10b981/ffffff?text=Clinic+Dashboard"
+                src="https://cdn-icons-png.flaticon.com/512/2389/2389770.png" // Dashboard-style illustration
                 alt="Clinic Dashboard"
                 className="rounded-2xl shadow-xl w-full"
               />
@@ -317,11 +311,11 @@ const App = () => {
             <div className="space-y-8">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                  Transform Your Clinic Operations
+                  Built for Campus Clinics
                 </h2>
                 <p className="text-lg text-gray-600 mb-6">
-                  ClinicFlow helps you save time, reduce errors, and focus on
-                  what matters most - patient care.
+                  ClinicFlow helps student healthcare providers reduce
+                  paperwork, improve access, and deliver better care.
                 </p>
               </div>
 
@@ -346,16 +340,16 @@ const App = () => {
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M5 13l4 4L19 7"
-                      ></path>
+                      />
                     </svg>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">
-                      Save 15+ Hours Weekly
+                      Replace Paperwork
                     </h3>
                     <p className="text-gray-600">
-                      Automate administrative tasks and reduce paperwork by up
-                      to 70%
+                      Go fully digital with records, prescriptions, and
+                      feedback.
                     </p>
                   </div>
                 </div>
@@ -380,16 +374,16 @@ const App = () => {
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M5 13l4 4L19 7"
-                      ></path>
+                      />
                     </svg>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">
-                      Improve Patient Satisfaction
+                      Improve Student Access
                     </h3>
                     <p className="text-gray-600">
-                      Reduce wait times and enhance communication with automated
-                      reminders
+                      Easy online booking and digital prescriptions reduce wait
+                      times.
                     </p>
                   </div>
                 </div>
@@ -414,163 +408,20 @@ const App = () => {
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M5 13l4 4L19 7"
-                      ></path>
+                      />
                     </svg>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">
-                      Increase Revenue
+                      Open-Source Inspiration
                     </h3>
                     <p className="text-gray-600">
-                      Optimize scheduling to fill 95%+ of appointment slots
+                      A project to inspire your campus to build similar systems.
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div
-            className={`text-center mb-16 transition-all duration-1000 ease-out ${
-              isVisible.testimonials
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
-            }`}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Trusted by Healthcare Professionals
-            </h2>
-            <p className="text-lg text-gray-600">
-              See what clinic owners and managers are saying about ClinicFlow
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card
-              className={`border-none shadow-lg hover:shadow-xl transition-all duration-700 ease-out border-t-4 border-t-emerald-500 ${
-                isVisible.testimonials
-                  ? "opacity-100 -translate-y-0"
-                  : "opacity-0 -translate-y-8"
-              }`}
-              style={{ transitionDelay: "100ms" }}
-            >
-              <div className="p-6">
-                <div className="flex text-emerald-400 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="h-5 w-5 fill-current"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-6">
-                  "ClinicFlow has transformed our practice. We've reduced
-                  administrative time by 60% and our patient satisfaction scores
-                  have never been higher."
-                </p>
-                <div className="flex items-center">
-                  <div className="h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
-                    <span className="font-semibold text-emerald-600">SJ</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">
-                      Dr. Sarah Johnson
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      Family Care Clinic
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card
-              className={`border-none shadow-lg hover:shadow-xl transition-all duration-700 ease-out border-t-4 border-t-teal-500 ${
-                isVisible.testimonials
-                  ? "opacity-100 -translate-y-0"
-                  : "opacity-0 -translate-y-8"
-              }`}
-              style={{ transitionDelay: "200ms" }}
-            >
-              <div className="p-6">
-                <div className="flex text-emerald-400 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="h-5 w-5 fill-current"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-6">
-                  "The implementation was seamless, and the support team is
-                  exceptional. Our staff adapted quickly and now can't imagine
-                  working without it."
-                </p>
-                <div className="flex items-center">
-                  <div className="h-10 w-10 bg-teal-100 rounded-full flex items-center justify-center mr-3">
-                    <span className="font-semibold text-teal-600">MS</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">
-                      Michael Stevens
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      City Medical Group
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
-            <Card
-              className={`border-none shadow-lg hover:shadow-xl transition-all duration-700 ease-out border-t-4 border-t-emerald-500 ${
-                isVisible.testimonials
-                  ? "opacity-100 -translate-y-0"
-                  : "opacity-0 -translate-y-8"
-              }`}
-              style={{ transitionDelay: "300ms" }}
-            >
-              <div className="p-6">
-                <div className="flex text-emerald-400 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="h-5 w-5 fill-current"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-6">
-                  "The reporting features give us insights we never had before.
-                  We've optimized our scheduling and increased patient
-                  throughput by 25%."
-                </p>
-                <div className="flex items-center">
-                  <div className="h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
-                    <span className="font-semibold text-emerald-600">EC</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-gray-900">
-                      Dr. Emily Chen
-                    </div>
-                    <div className="text-sm text-gray-500">Wellness Center</div>
-                  </div>
-                </div>
-              </div>
-            </Card>
           </div>
         </div>
       </section>
@@ -585,25 +436,57 @@ const App = () => {
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to Transform Your Clinic?
+            Ready to Digitize Your Campus Clinic?
           </h2>
           <p className="text-xl text-emerald-100 mb-8 max-w-3xl mx-auto">
-            Join thousands of healthcare providers who have streamlined their
-            operations and improved patient care with ClinicFlow.
+            Join the movement toward paperless, efficient, and student-centered
+            healthcare.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <Button className="bg-white text-emerald-600 hover:bg-gray-100 text-lg px-8 py-6 h-auto">
-              Start Free Trial
-            </Button>
-            <Button
-              variant="outline"
-              className="border-2 border-white text-emerald-600 hover:bg-white/10 text-lg px-8 py-6 h-auto"
+            <a
+              href="https://www.linkedin.com/in/natnael-sisay-orcadev/"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Schedule Demo
-            </Button>
+              <Button className="bg-white text-emerald-600 hover:bg-gray-100 text-lg px-8 py-6 h-auto">
+                Contact Developer
+              </Button>
+            </a>
+            <Link to="/login">
+              <Button
+                variant="outline"
+                className="border-2 border-white text-emerald-600 hover:bg-white/10 text-lg px-8 py-6 h-auto"
+              >
+                Try Demo
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-gray-300 text-sm leading-relaxed max-w-2xl mx-auto">
+            Developed by{" "}
+            <a
+              href="https://www.linkedin.com/in/natnael-sisay-orcadev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-400 hover:text-emerald-300 underline"
+            >
+              Natnael Sisay
+            </a>
+            . A simple clinic management system project to motivate my former
+            campus to build similar tools and enhance student healthcare
+            experience by replacing paperwork with digital solutions.
+          </p>
+          <div className="mt-4 text-gray-500 text-xs">
+            © {new Date().getFullYear()} ClinicFlow. Open-source for educational
+            use.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

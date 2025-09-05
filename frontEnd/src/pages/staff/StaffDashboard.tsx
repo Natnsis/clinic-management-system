@@ -1,9 +1,8 @@
-import React from "react";
 import StaffSidebar from "@/components/staff/StaffSidebar";
 
 const StaffDashboard = () => {
   return (
-    <div className="min-h-screen bg-emerald-50">
+    <div className="min-h-screen ">
       {/* Sidebar */}
       <StaffSidebar />
 

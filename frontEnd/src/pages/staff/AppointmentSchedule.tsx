@@ -5,8 +5,8 @@ import {
   Clock,
   User,
   MessageCircle,
+  Trash2,
   Plus,
-  Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,8 +28,10 @@ const AppointmentSchedule = () => {
   const [selectedDate, setSelectedDate] = useState("today");
   const [loadingAll, setLoadingAll] = useState(true);
 
+  // Store actions
   const getAppointments = useAppointmentStore((s) => s.fetchItems);
-  const rawAppointments = useAppointmentStore((s) => s.items); // May not be array!
+  const deleteAppointment = useAppointmentStore((s) => s.deleteItem);
+  const rawAppointments = useAppointmentStore((s) => s.items);
 
   const getPatientById = usePatientStore((s) => s.fetchItemsById);
   const rawPatients = usePatientStore((s) => s.items);
@@ -41,13 +43,11 @@ const AppointmentSchedule = () => {
     const fetchAllData = async () => {
       setLoadingAll(true);
       try {
-        // 1️⃣ Fetch appointments
+        // 1. Load appointments
         await getAppointments();
-
-        // 2️⃣ Get latest appointments from store
         const appointments = useAppointmentStore.getState().items;
 
-        // 3️⃣ Extract unique patient and staff IDs safely
+        // 2. Extract unique patient and staff IDs
         const patientIds = [
           ...new Set(
             Array.isArray(appointments)
@@ -64,7 +64,7 @@ const AppointmentSchedule = () => {
           ),
         ];
 
-        // 4️⃣ Fetch related patients and staff in parallel
+        // 3. Fetch related data in parallel
         await Promise.all([
           ...patientIds.map((id) => getPatientById(id)),
           ...staffIds.map((id) => getStaffById(id)),
@@ -79,7 +79,7 @@ const AppointmentSchedule = () => {
     fetchAllData();
   }, [getAppointments, getPatientById, getStaffById]);
 
-  // 🔒 Safe arrays: ensure we always have arrays
+  // Ensure arrays
   const appointmentsList = Array.isArray(rawAppointments)
     ? rawAppointments
     : [];
@@ -89,7 +89,7 @@ const AppointmentSchedule = () => {
   const findPatient = (id: string) => patients.find((p) => p.id === id);
   const findStaff = (id: string) => staff.find((s) => s.id === id);
 
-  // ✅ Now safe to filter!
+  // Filtered appointments
   const filteredAppointments = appointmentsList.filter((a) => {
     const patient = findPatient(a.patientId);
     const staffMember = findStaff(a.staffId);
@@ -114,6 +114,7 @@ const AppointmentSchedule = () => {
     return matchesSearch && matchesType;
   });
 
+  // Type badge color
   const getTypeColor = (type?: string) => {
     const t = (type || "").toLowerCase();
     if (t.includes("checkup")) return "bg-blue-100 text-blue-800";
@@ -132,19 +133,51 @@ const AppointmentSchedule = () => {
     "review",
   ];
 
+  // Handle delete
+  const handleDelete = (id: string, patientName: string) => {
+    const confirmed = window.confirm(
+      `⚠️ Delete appointment for ${patientName}? This action cannot be undone.`
+    );
+
+    if (confirmed) {
+      try {
+        deleteAppointment(id);
+        console.log("Appointment deleted:", id);
+      } catch (err) {
+        console.error("Failed to delete appointment:", err);
+        alert("Could not delete appointment. Please try again.");
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-amber-50">
       <StaffSidebar />
 
       <div className="ml-64 p-8">
+        {/* Header */}
         <header className="mb-8">
-          <div className="flex items-center space-x-3 mb-2">
-            <Calendar className="h-8 w-8 text-amber-600" />
-            <h1 className="text-2xl font-bold text-amber-900">
-              Appointment Schedule
-            </h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Calendar className="h-8 w-8 text-amber-600" />
+              <div>
+                <h1 className="text-2xl font-bold text-amber-900">
+                  Appointment Schedule
+                </h1>
+                <p className="text-amber-700">
+                  Manage and delete patient appointments
+                </p>
+              </div>
+            </div>
+
+            {/* Add Appointment Button */}
+            <Link to="/appointmentAddingForm">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white px-6">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Appointment
+              </Button>
+            </Link>
           </div>
-          <p className="text-amber-700">Manage and view patient appointments</p>
         </header>
 
         {/* Controls */}
@@ -183,17 +216,10 @@ const AppointmentSchedule = () => {
                 </option>
               ))}
             </select>
-
-            <Link to="/appointmentAddingForm">
-              <Button className="bg-amber-600 hover:bg-amber-700 text-white flex items-center space-x-2">
-                <Plus className="h-4 w-4" />
-                <span>Schedule Appointment</span>
-              </Button>
-            </Link>
           </div>
         </div>
 
-        {/* Appointment Cards */}
+        {/* Appointment List */}
         <div className="space-y-6">
           {loadingAll ? (
             <p className="text-amber-700 text-center py-8">
@@ -206,12 +232,12 @@ const AppointmentSchedule = () => {
                 No appointments found
               </h3>
               <p className="text-amber-700 mb-4">
-                Try adjusting your search or filter criteria.
+                Try adjusting your search or create a new one.
               </p>
-              <Link to="/appointmentAddingForm" className="inline-block">
-                <Button className="bg-amber-600 hover:bg-amber-700">
+              <Link to="/appointmentAddingForm">
+                <Button className="bg-amber-600 hover:bg-amber-700 text-white">
                   <Plus className="h-4 w-4 mr-2" />
-                  Schedule First Appointment
+                  Schedule New Appointment
                 </Button>
               </Link>
             </Card>
@@ -276,7 +302,7 @@ const AppointmentSchedule = () => {
                                   <MessageCircle className="h-4 w-4 mt-0.5 text-amber-600 flex-shrink-0" />
                                   <div>
                                     <p className="text-sm font-medium text-amber-800 mb-1">
-                                      Notes
+                                      Note
                                     </p>
                                     <p className="text-sm text-amber-700">
                                       {a.note}
@@ -289,21 +315,16 @@ const AppointmentSchedule = () => {
                         </div>
                       </div>
 
-                      <div className="flex flex-col space-y-2 mt-6 lg:mt-0 lg:ml-6">
+                      {/* Only Delete Button */}
+                      <div className="mt-6 lg:mt-0 lg:ml-6">
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-amber-600 border-amber-200 hover:bg-amber-50"
+                          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                          onClick={() => handleDelete(a.id, patientName)}
                         >
-                          <Edit className="h-4 w-4 mr-2" /> Edit
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-amber-600 border-amber-200 hover:bg-amber-50"
-                        >
-                          <MessageCircle className="h-4 w-4 mr-2" /> Message
-                          Patient
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
                         </Button>
                       </div>
                     </div>
