@@ -13,12 +13,13 @@ import cookieParser from "cookie-parser";
 const app = express();
 const PORT = 4000;
 
+const allowedOrigins = ["http://localhost:5173", "https://your-app.vercel.app"];
 //built in middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   })
 );
